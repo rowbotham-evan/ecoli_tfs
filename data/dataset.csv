@@ -1,5 +1,5 @@
-index,tf_name,effector,tf_sequence,dna_binding_sequence,method,characterized
-1,ArcA,,,,SELEX,yes
+index,tf_name,effector,tf_binding_sequence,dna_binding_sequence,method,characterized
+1,ArcA,,VESYKFNGWELDINSRSLIGPDGEQYKLPRSEFRAMLHFCENPGKIQSRAELLKKMTGRELKPHDRTVDVTIRRIRKHFESTPDTPEIIATIHGEGYRFCG,,SELEX,yes
 2,ArgP,Arginine; Lysine,,,SELEX,yes
 3,ArgR,,,,SELEX,yes
 4,AscG,,,,SELEX,yes
