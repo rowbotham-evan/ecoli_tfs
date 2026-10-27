@@ -1,0 +1,63 @@
+:root {
+  --bg: #ffffff;
+  --surface: #f6f7f9;
+  --text: #1b1f24;
+  --muted: #5b6470;
+  --border: #dde1e6;
+  --accent: #2563eb;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1216;
+    --surface: #171b21;
+    --text: #e6e8eb;
+    --muted: #98a1ad;
+    --border: #2a3039;
+    --accent: #6ea0ff;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+a { color: var(--accent); }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+.muted { color: var(--muted); }
+
+.site-header { border-bottom: 1px solid var(--border); }
+.site-header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 56px; }
+.brand { font-weight: 600; color: var(--text); text-decoration: none; }
+nav { display: flex; gap: 16px; }
+nav a { color: var(--muted); text-decoration: none; }
+nav a:hover { color: var(--text); }
+
+.hero { padding: 48px 0 24px; }
+.hero h1 { margin: 0 0 8px; font-size: clamp(1.6rem, 4vw, 2.4rem); line-height: 1.2; }
+.hero p { margin: 0; color: var(--muted); }
+
+section { padding: 24px 0; }
+h2 { font-size: 1.25rem; }
+
+.toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+#search {
+  flex: 1 1 280px;
+  padding: 10px 12px;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+th { position: sticky; top: 0; background: var(--surface); cursor: pointer; user-select: none; }
+tbody tr:hover { background: var(--surface); }
+.empty { padding: 24px; text-align: center; color: var(--muted); }
+
+footer { padding: 32px 16px; border-top: 1px solid var(--border); margin-top: 32px; }
