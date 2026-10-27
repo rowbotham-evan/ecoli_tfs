@@ -1,116 +1,116 @@
-index,tf_name,effector,tf_binding_sequence,strain,dna_binding_sequence,method,characterized
-1,ArcA,,VESYKFNGWELDINSRSLIGPDGEQYKLPRSEFRAMLHFCENPGKIQSRAELLKKMTGRELKPHDRTVDVTIRRIRKHFESTPDTPEIIATIHGEGYRFCG,K-12,,SELEX,yes
-2,ArgP,Arginine; Lysine,,,,SELEX,yes
-3,ArgR,,,,,SELEX,yes
-4,AscG,,,,,SELEX,yes
-5,AsnC,,,,,SELEX,yes
-6,BasR,Acetyl-P,,,,SELEX,yes
-7,BetI,Choline,,,,SELEX,yes
-8,CbpB,,,,,SELEX,yes
-9,CitB,,,,,SELEX,yes
-10,Cra,"Fru-1,6-diP",,,,SELEX,yes
-11,CreB,Acetyl-P,,,,SELEX,yes
-12,CRP,cAMP,,,,SELEX,yes
-13,CynR,Cyanate,,,,SELEX,yes
-14,CytR,,,,,SELEX,yes
-15,Dan,,,,,SELEX,yes
-16,DcuR,Acetyl-P,,,,SELEX,yes
-17,DeoR,,,,,SELEX,yes
-18,DeoT,,,,,SELEX,yes
-19,DhaR,,,,,SELEX,yes
-20,DicA,,,,,SELEX,yes
-21,Dps,,,,,SELEX,yes
-22,DsdC,Serine,,,,SELEX,yes
-23,EbgR,,,,,SELEX,yes
-24,EvgA,Acetyl-P,,,,SELEX,yes
-25,ExuR,,,,,SELEX,yes
-26,Fis,,,,,SELEX,yes
-27,FlhA,Formate,,,,SELEX,yes
-28,FrlR,,,,,SELEX,yes
-29,Fur,,,,,SELEX,yes
-30,GalR,,,,,SELEX,yes
-31,GusR,,,,,SELEX,yes
-32,HcaR,,,,,SELEX,yes
-33,Hfq,,,,,SELEX,yes
-34,HipB,,,,,SELEX,yes
-35,HNS,Hha,,,,SELEX,yes
-36,HU,,,,,SELEX,yes
-37,IclR,,,,,SELEX,yes
-38,IHF,,,,,SELEX,yes
-39,IlvY,Hydroxybutyrate,,,,SELEX,yes
-40,KdpE,Acetyl-P,,,,SELEX,yes
-41,LctR,Lactate,,,,SELEX,yes
-42,LeuO,,,,,SELEX,yes
-43,LrhA,,,,,SELEX,yes
-44,Lrp,Leucine,,,,SELEX,yes
-45,MalI,Maltose,,,,SELEX,yes
-46,MarR,Salicylate,,,,SELEX,yes
-47,Mlc,,,,,SELEX,yes
-48,MntR,MnCl2,,,,SELEX,yes
-49,ModE,Molybdate,,,,SELEX,yes
-50,MrlA,,,,,SELEX,yes
-51,NadR,NMN,,,,SELEX,yes
-52,NanR,Neu5Ac,,,,SELEX,yes
-53,NhaR,NaCl,,,,SELEX,yes
-54,NorR,,,,,SELEX,yes
-55,NtrC,,,,,SELEX,yes
-56,PepA,,,,,SELEX,yes
-57,PgrR,,,,,SELEX,yes
-58,PhnF,,,,,SELEX,yes
-59,PhoB,,,,,SELEX,yes
-60,PspF,,,,,SELEX,yes
-61,PutA,Proline,,,,SELEX,yes
-62,OmpR,Acetyl-P,,,,SELEX,yes
-63,OxyR,,,,,SELEX,yes
-64,QseA,Hydroxybenzoic acid,,,,SELEX,yes
-65,QseB,Acetyl-P,,,,SELEX,yes
-66,RbsR,Ribose,,,,SELEX,yes
-67,RcdA,,,,,SELEX,yes
-68,RcsB,,,,,SELEX,yes
-69,RpiR,,,,,SELEX,yes
-71,RutR,,,,,SELEX,yes
-72,SdiA,HSL-A; HSL-F; HSL-K; HSL-OC,,,,SELEX,yes
-73,SfsA,Maltose,,,,SELEX,yes
-74,SlmA,,,,,SELEX,yes
-75,SoxR,Dithithreitol; Fe,,,,SELEX,yes
-76,SoxS,Dithiothreitol; Fe,,,,SELEX,yes
-77,SrlR,,,,,SELEX,yes
-78,TorR,Acetyl-P,,,,SELEX,yes
-79,TreR,Trehalose,,,,SELEX,yes
-80,UlaR,Acetyl-P,,,,SELEX,yes
-81,UvrY,Acetyl-P,,,,SELEX,yes
-82,UxuR,Glucronate,,,,SELEX,yes
-83,ZraR,,,,,SELEX,yes
-84,Zur,ZnCl2,,,,SELEX,yes
-85,YagI,,,,,SELEX,no
-86,YahA,c-di-GMP,,,,SELEX,no
-87,YahB,,,,,SELEX,no
-88,YbaO,,,,,SELEX,no
-89,YbiH,,,,,SELEX,no
-90,YcaN,,,,,SELEX,no
-91,YcfQ,,,,,SELEX,no
-92,YciT(DeoT),,,,,SELEX,no
-93,YdcN(SutR),,,,,SELEX,no
-94,YdfH,,,,,SELEX,no
-95,YeaM(NimR),,,,,SELEX,no
-96,YedW,,,,,SELEX,no
-97,YegW,,,,,SELEX,no
-98,YfaX,,,,,SELEX,no
-99,YfeR,,,,,SELEX,no
-100,YfgA,,,,,SELEX,no
-101,YfhH,,,,,SELEX,no
-102,YgfB,,,,,SELEX,no
-103,YgfI,,,,,SELEX,no
-104,YheR,,,,,SELEX,no
-105,YiaJ(BdcA),,,,,SELEX,no
-106,YiaU,,,,,SELEX,no
-107,YidZ,,,,,SELEX,no
-108,YifA,,,,,SELEX,no
-109,YijO,,,,,SELEX,no
-110,YjgJ,,,,,SELEX,no
-111,YjiE,,,,,SELEX,no
-112,YkgA,,,,,SELEX,no
-113,YkgD(RclR),,,,,SELEX,no
-114,YneJ,,,,,SELEX,no
-115,YnfL,,,,,SELEX,no
-116,YpdB,Acetyl-P,,,,SELEX,no
+index,tf_name,effector,tf_binding_sequence,sequence_strain,dna_binding_sequence,method,strain,characterized
+1,ArcA,,VESYKFNGWELDINSRSLIGPDGEQYKLPRSEFRAMLHFCENPGKIQSRAELLKKMTGRELKPHDRTVDVTIRRIRKHFESTPDTPEIIATIHGEGYRFCG,K-12 W3110,,SELEX,K-12 W3110,yes
+2,ArgP,Arginine; Lysine,,,,SELEX,K-12 W3110,yes
+3,ArgR,,,,,SELEX,K-12 W3110,yes
+4,AscG,,,,,SELEX,K-12 W3110,yes
+5,AsnC,,,,,SELEX,K-12 W3110,yes
+6,BasR,Acetyl-P,,,,SELEX,K-12 W3110,yes
+7,BetI,Choline,,,,SELEX,K-12 W3110,yes
+8,CbpB,,,,,SELEX,K-12 W3110,yes
+9,CitB,,,,,SELEX,K-12 W3110,yes
+10,Cra,"Fru-1,6-diP",,,,SELEX,K-12 W3110,yes
+11,CreB,Acetyl-P,,,,SELEX,K-12 W3110,yes
+12,CRP,cAMP,,,,SELEX,K-12 W3110,yes
+13,CynR,Cyanate,,,,SELEX,K-12 W3110,yes
+14,CytR,,,,,SELEX,K-12 W3110,yes
+15,Dan,,,,,SELEX,K-12 W3110,yes
+16,DcuR,Acetyl-P,,,,SELEX,K-12 W3110,yes
+17,DeoR,,,,,SELEX,K-12 W3110,yes
+18,DeoT,,,,,SELEX,K-12 W3110,yes
+19,DhaR,,,,,SELEX,K-12 W3110,yes
+20,DicA,,,,,SELEX,K-12 W3110,yes
+21,Dps,,,,,SELEX,K-12 W3110,yes
+22,DsdC,Serine,,,,SELEX,K-12 W3110,yes
+23,EbgR,,,,,SELEX,K-12 W3110,yes
+24,EvgA,Acetyl-P,,,,SELEX,K-12 W3110,yes
+25,ExuR,,,,,SELEX,K-12 W3110,yes
+26,Fis,,,,,SELEX,K-12 W3110,yes
+27,FlhA,Formate,,,,SELEX,K-12 W3110,yes
+28,FrlR,,,,,SELEX,K-12 W3110,yes
+29,Fur,,,,,SELEX,K-12 W3110,yes
+30,GalR,,,,,SELEX,K-12 W3110,yes
+31,GusR,,,,,SELEX,K-12 W3110,yes
+32,HcaR,,,,,SELEX,K-12 W3110,yes
+33,Hfq,,,,,SELEX,K-12 W3110,yes
+34,HipB,,,,,SELEX,K-12 W3110,yes
+35,HNS,Hha,,,,SELEX,K-12 W3110,yes
+36,HU,,,,,SELEX,K-12 W3110,yes
+37,IclR,,,,,SELEX,K-12 W3110,yes
+38,IHF,,,,,SELEX,K-12 W3110,yes
+39,IlvY,Hydroxybutyrate,,,,SELEX,K-12 W3110,yes
+40,KdpE,Acetyl-P,,,,SELEX,K-12 W3110,yes
+41,LctR,Lactate,,,,SELEX,K-12 W3110,yes
+42,LeuO,,,,,SELEX,K-12 W3110,yes
+43,LrhA,,,,,SELEX,K-12 W3110,yes
+44,Lrp,Leucine,,,,SELEX,K-12 W3110,yes
+45,MalI,Maltose,,,,SELEX,K-12 W3110,yes
+46,MarR,Salicylate,,,,SELEX,K-12 W3110,yes
+47,Mlc,,,,,SELEX,K-12 W3110,yes
+48,MntR,MnCl2,,,,SELEX,K-12 W3110,yes
+49,ModE,Molybdate,,,,SELEX,K-12 W3110,yes
+50,MrlA,,,,,SELEX,K-12 W3110,yes
+51,NadR,NMN,,,,SELEX,K-12 W3110,yes
+52,NanR,Neu5Ac,,,,SELEX,K-12 W3110,yes
+53,NhaR,NaCl,,,,SELEX,K-12 W3110,yes
+54,NorR,,,,,SELEX,K-12 W3110,yes
+55,NtrC,,,,,SELEX,K-12 W3110,yes
+56,PepA,,,,,SELEX,K-12 W3110,yes
+57,PgrR,,,,,SELEX,K-12 W3110,yes
+58,PhnF,,,,,SELEX,K-12 W3110,yes
+59,PhoB,,,,,SELEX,K-12 W3110,yes
+60,PspF,,,,,SELEX,K-12 W3110,yes
+61,PutA,Proline,,,,SELEX,K-12 W3110,yes
+62,OmpR,Acetyl-P,,,,SELEX,K-12 W3110,yes
+63,OxyR,,,,,SELEX,K-12 W3110,yes
+64,QseA,Hydroxybenzoic acid,,,,SELEX,K-12 W3110,yes
+65,QseB,Acetyl-P,,,,SELEX,K-12 W3110,yes
+66,RbsR,Ribose,,,,SELEX,K-12 W3110,yes
+67,RcdA,,,,,SELEX,K-12 W3110,yes
+68,RcsB,,,,,SELEX,K-12 W3110,yes
+69,RpiR,,,,,SELEX,K-12 W3110,yes
+71,RutR,,,,,SELEX,K-12 W3110,yes
+72,SdiA,HSL-A; HSL-F; HSL-K; HSL-OC,,,,SELEX,K-12 W3110,yes
+73,SfsA,Maltose,,,,SELEX,K-12 W3110,yes
+74,SlmA,,,,,SELEX,K-12 W3110,yes
+75,SoxR,Dithithreitol; Fe,,,,SELEX,K-12 W3110,yes
+76,SoxS,Dithiothreitol; Fe,,,,SELEX,K-12 W3110,yes
+77,SrlR,,,,,SELEX,K-12 W3110,yes
+78,TorR,Acetyl-P,,,,SELEX,K-12 W3110,yes
+79,TreR,Trehalose,,,,SELEX,K-12 W3110,yes
+80,UlaR,Acetyl-P,,,,SELEX,K-12 W3110,yes
+81,UvrY,Acetyl-P,,,,SELEX,K-12 W3110,yes
+82,UxuR,Glucronate,,,,SELEX,K-12 W3110,yes
+83,ZraR,,,,,SELEX,K-12 W3110,yes
+84,Zur,ZnCl2,,,,SELEX,K-12 W3110,yes
+85,YagI,,,,,SELEX,K-12 W3110,no
+86,YahA,c-di-GMP,,,,SELEX,K-12 W3110,no
+87,YahB,,,,,SELEX,K-12 W3110,no
+88,YbaO,,,,,SELEX,K-12 W3110,no
+89,YbiH,,,,,SELEX,K-12 W3110,no
+90,YcaN,,,,,SELEX,K-12 W3110,no
+91,YcfQ,,,,,SELEX,K-12 W3110,no
+92,YciT(DeoT),,,,,SELEX,K-12 W3110,no
+93,YdcN(SutR),,,,,SELEX,K-12 W3110,no
+94,YdfH,,,,,SELEX,K-12 W3110,no
+95,YeaM(NimR),,,,,SELEX,K-12 W3110,no
+96,YedW,,,,,SELEX,K-12 W3110,no
+97,YegW,,,,,SELEX,K-12 W3110,no
+98,YfaX,,,,,SELEX,K-12 W3110,no
+99,YfeR,,,,,SELEX,K-12 W3110,no
+100,YfgA,,,,,SELEX,K-12 W3110,no
+101,YfhH,,,,,SELEX,K-12 W3110,no
+102,YgfB,,,,,SELEX,K-12 W3110,no
+103,YgfI,,,,,SELEX,K-12 W3110,no
+104,YheR,,,,,SELEX,K-12 W3110,no
+105,YiaJ(BdcA),,,,,SELEX,K-12 W3110,no
+106,YiaU,,,,,SELEX,K-12 W3110,no
+107,YidZ,,,,,SELEX,K-12 W3110,no
+108,YifA,,,,,SELEX,K-12 W3110,no
+109,YijO,,,,,SELEX,K-12 W3110,no
+110,YjgJ,,,,,SELEX,K-12 W3110,no
+111,YjiE,,,,,SELEX,K-12 W3110,no
+112,YkgA,,,,,SELEX,K-12 W3110,no
+113,YkgD(RclR),,,,,SELEX,K-12 W3110,no
+114,YneJ,,,,,SELEX,K-12 W3110,no
+115,YnfL,,,,,SELEX,K-12 W3110,no
+116,YpdB,Acetyl-P,,,,SELEX,K-12 W3110,no
