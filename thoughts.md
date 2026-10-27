@@ -29,9 +29,9 @@ The following methods are catalogued in the database.
 
 ### PPTP-Seq
 
-\[1\][Genome-Wide Mapping of the Escherichia coli PhoB Regulon Reveals Many Transcriptionally Inert, Intragenic Binding Sites](https://www.nature.com/articles/s41467-023-41572-4)
+\[1\][Genome-wide promoter responses to CRISPR perturbations of regulators reveal regulatory networks in Escherichia coli](https://www.nature.com/articles/s41467-023-41572-4)
 
 
 ### IPOD-HR
 
-\[1\][ Genomic footprinting uncovers global transcription factor responses to amino acids in Escherichia coli](https://pubmed.ncbi.nlm.nih.gov/37820729/)
+\[1\][Genomic footprinting uncovers global transcription factor responses to amino acids in Escherichia coli](https://pubmed.ncbi.nlm.nih.gov/37820729/)
