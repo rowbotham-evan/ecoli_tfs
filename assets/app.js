@@ -1,6 +1,9 @@
 // Loads data/dataset.csv and renders a searchable, sortable table.
 const DATA_URL = "data/dataset.csv";
 const MAX_ROWS = 500;
+const METHODS = ["SELEX", "TTPT", "DAP", "CHIP"];
+// Dropdown edits live in this browser only; "Download CSV" exports them.
+const EDITS_KEY = "method-edits-v2";
 
 function parseCSV(text) {
   const rows = [];
@@ -27,7 +30,30 @@ const search = document.getElementById("search");
 const count = document.getElementById("count");
 const empty = document.getElementById("empty");
 
-let header = [], rows = [], sortCol = -1, sortDir = 1;
+let header = [], rows = [], sortCol = -1, sortDir = 1, methodCol = -1;
+
+function loadEdits() {
+  try { return JSON.parse(localStorage.getItem(EDITS_KEY)) || {}; } catch { return {}; }
+}
+
+function saveEdit(id, value) {
+  const edits = loadEdits();
+  edits[id] = value;
+  try { localStorage.setItem(EDITS_KEY, JSON.stringify(edits)); } catch {}
+}
+
+function cell(r, v, i) {
+  if (i !== methodCol) {
+    return `<td title="${escape(v)}">${escape(v.length > 60 ? v.slice(0, 60) + "…" : v)}</td>`;
+  }
+  const options = ["", ...METHODS, ...(v && !METHODS.includes(v) ? [v] : [])];
+  return `<td><select data-id="${escape(r[0])}">` + options.map(o =>
+    `<option${o === v ? " selected" : ""}>${escape(o)}</option>`).join("") + "</select></td>";
+}
+
+function toCSV(data) {
+  return data.map(r => r.map(v => /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v).join(",")).join("\n") + "\n";
+}
 
 function render() {
   const q = search.value.trim().toLowerCase();
@@ -38,7 +64,7 @@ function render() {
   table.tHead.innerHTML = "<tr>" + header.map((h, i) =>
     `<th data-i="${i}">${h}${i === sortCol ? (sortDir > 0 ? " ▲" : " ▼") : ""}</th>`).join("") + "</tr>";
   const body = view.slice(0, MAX_ROWS).map(r =>
-    "<tr>" + r.map(v => `<td title="${escape(v)}">${escape(v.length > 60 ? v.slice(0, 60) + "…" : v)}</td>`).join("") + "</tr>");
+    "<tr>" + r.map((v, i) => cell(r, v, i)).join("") + "</tr>");
   table.tBodies[0].innerHTML = body.join("");
   count.textContent = `${view.length} of ${rows.length} entries` + (view.length > MAX_ROWS ? ` (showing first ${MAX_ROWS})` : "");
 }
@@ -57,11 +83,31 @@ table.tHead.addEventListener("click", e => {
 });
 search.addEventListener("input", render);
 
+table.tBodies[0].addEventListener("change", e => {
+  const id = e.target.dataset.id;
+  const row = rows.find(r => r[0] === id);
+  if (!row) return;
+  row[methodCol] = e.target.value;
+  saveEdit(id, e.target.value);
+});
+
+document.getElementById("download").addEventListener("click", () => {
+  const blob = new Blob([toCSV([header, ...rows])], { type: "text/csv" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "dataset.csv";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
 fetch(DATA_URL)
   .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
   .then(text => {
     [header = [], ...rows] = parseCSV(text);
     if (!header.length) throw new Error("empty");
+    methodCol = header.indexOf("method");
+    const edits = loadEdits();
+    if (methodCol >= 0) rows.forEach(r => { if (r[0] in edits) r[methodCol] = edits[r[0]]; });
     render();
     empty.hidden = rows.length > 0;
   })
