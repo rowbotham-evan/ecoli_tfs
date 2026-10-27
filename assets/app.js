@@ -60,9 +60,10 @@ search.addEventListener("input", render);
 fetch(DATA_URL)
   .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
   .then(text => {
-    [header, ...rows] = parseCSV(text);
-    if (!rows.length) throw new Error("empty");
+    [header = [], ...rows] = parseCSV(text);
+    if (!header.length) throw new Error("empty");
     render();
+    empty.hidden = rows.length > 0;
   })
   .catch(() => {
     empty.hidden = false;
