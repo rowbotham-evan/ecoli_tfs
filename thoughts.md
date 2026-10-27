@@ -24,6 +24,8 @@ The following methods are catalogued in the database.
 
 ### CHIP-seq 
 
+#### Procedure
+
 \[1\][Genome-Wide Mapping of the Escherichia coli PhoB Regulon Reveals Many Transcriptionally Inert, Intragenic Binding Sites.](https://pubmed.ncbi.nlm.nih.gov/37067422/)
 
 
