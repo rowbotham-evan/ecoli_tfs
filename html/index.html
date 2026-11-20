@@ -57,12 +57,18 @@ input[type="checkbox"] { width: 16px; height: 16px; margin: 0; accent-color: var
 .tf-picker-head .tf-regulon { margin-left: auto; }
 .tf-filter { height: 34px; min-width: 170px; padding: 6px 10px; border: 1px solid #d4d4d4; border-radius: 6px; background: #fff; color: var(--ink); font-size: 0.8rem; }
 /* No inner scroll: every TF is visible at once on the landing view. */
-.tf-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+/* The TFs sit on an even grid: every button is the same width, in aligned columns that
+   fill the box edge to edge, instead of ragged rows of different-sized buttons. */
+.tf-chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(59px, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.tf-chips li { min-width: 0; }
+.tf-chips li:has(.via), .tf-chips li.wide { grid-column: span 2; }   /* a search match shown with its gene, or a name too long for one column */
+.tf-chips .no-match { grid-column: 1 / -1; }
 .tf-chips button {
-  padding: 3px 10px; border: 1px solid var(--line); border-radius: 999px;
-  background: #fafafa; color: var(--ink); font-size: 0.75rem; line-height: 1.5;
+  width: 100%; padding: 0 3px; border: 1px solid #999999; border-radius: 9px;
+  background: #ececec; color: var(--ink); font-size: 14px; line-height: 1.55;
+  text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.tf-chips button:hover { border-color: #b8b8b8; background: #fff; }
+.tf-chips button:hover { border-color: #8a8a8a; background: #fff; }
 .tf-chips button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 650; }
 .tf-chips .via { margin-left: 5px; color: var(--muted); font-size: 0.7rem; font-style: italic; }   /* the gene a TF was matched by */
 .tf-chips .no-match { color: var(--muted); font-size: 0.78rem; padding: 4px 2px; }
@@ -459,6 +465,17 @@ function escape(s) {
 
 // ---- Browse-by-TF chips -----------------------------------------------------
 
+// A name too long for one column gets two, so no button is cut off with "…".
+function fitChips() {
+  const items = [...tfChips.querySelectorAll("li")];
+  for (const li of items) li.classList.remove("wide");
+  for (const li of items) {
+    const button = li.querySelector("button");
+    if (button && button.scrollWidth > button.clientWidth) li.classList.add("wide");
+  }
+}
+window.addEventListener("resize", fitChips);
+
 function renderTFChips() {
   const needle = tfFilterInput.value.trim().toLowerCase();
   let list = tfNames;
@@ -490,6 +507,7 @@ function renderTFChips() {
           `${escape(n)}${hint ? `<span class="via">${escape(hint)}</span>` : ""} <span class="sr-only">— show only this TF's records</span></button></li>`;
       }).join("")
     : `<li class="no-match">No TF matches the current filters.</li>`;
+  fitChips();
 }
 
 // The genes each TF can be found by: tf_name -> { own, targets }, both sorted lists.

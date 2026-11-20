@@ -50,8 +50,16 @@ h1 { font-size: 1.6rem; line-height: 1.2; letter-spacing: -0.02em; font-weight: 
 .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 0 0 12px; padding: 0; list-style: none; color: var(--muted); font-size: 0.75rem; }
 .legend li { display: inline-flex; align-items: center; gap: 7px; }
 .swatch { width: 10px; height: 10px; border-radius: 3px; flex: none; }
-#identity .tiles { margin: 6px 0 22px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); }
+/* The summary figures sit in their own box inside the card. */
+#identity .tiles {
+  margin: 10px 0 22px; padding: 22px 26px; border: 2px solid #9a9a9a; border-radius: 10px; background: #fafafa;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 24px 32px;
+}
+#identity .tile { text-align: center; }
 #identity .tile .sub { line-height: 1.45; margin-top: 2px; }
+#identity .tile .num small { display: inline-block; min-width: 4.4em; text-align: left; color: var(--muted); font-size: 0.8rem; font-weight: 500; letter-spacing: 0; }   /* "Median:" and "Mean:", lined up */
+#identity .tile .sub:empty { display: none; }
+#identity-legend { margin-top: 36px; }   /* breathing room between the tiles and the matrix's legend */
 /* The matrix, with the table of protein families (numbered as on the matrix) to its right.
    The table gives each family's size, not its members, so it stays narrow without wrapping;
    the members are the rows inside that family's frame. */
@@ -65,19 +73,19 @@ h1 { font-size: 1.6rem; line-height: 1.2; letter-spacing: -0.02em; font-weight: 
 .family-table tr:last-child td { border-bottom: 0; }
 .family-table td.no { color: var(--muted); font-variant-numeric: tabular-nums; }
 .family-table .n { text-align: right; font-variant-numeric: tabular-nums; }
+.family-members-title { margin: 16px 0 8px; font-size: 0.85rem; font-weight: 650; }
 .family-table tbody tr { cursor: pointer; }
 .family-table tbody tr:hover { background: #f3f3f1; }
 .family-table tbody tr[aria-pressed="true"] { background: #dfeafb; font-weight: 650; }
 .family-table tbody tr[aria-pressed="true"] td.no { color: var(--ink); }
 #identity-chart .fam-frame.on { stroke: #111111; stroke-width: 3; fill: rgba(17, 17, 17, 0.05); }   /* the family picked in the table */
-#identity-table { max-width: none; }
 .scale-bar { width: 150px; height: 10px; border-radius: 3px; border: 1px solid var(--line); }   /* the heatmap's color scale */
 .miss-chip .to { color: var(--muted); }
 .miss-chip { cursor: default; }
 .miss-chip:hover, .miss-chip:focus-visible { border-color: #eb6834; background: #fdf1ea; }
-#identity-chart .row-label.on, #identity-chart .col-label.on { fill: #111111; font-weight: 700; }   /* the row and column of the TF pair being pointed at */
 .miss-title { margin: 22px 0 0; font-size: 0.92rem; font-weight: 650; }
-.miss-key { margin: 4px 0 0; color: var(--muted); font-size: 0.8rem; }
+.grid-link { margin: 24px 0 0; font-size: 0.85rem; }
+.miss-key { margin: 12px 0 0; color: var(--muted); font-size: 0.78rem; }
 .miss-group .agree-group { margin-top: 12px; color: var(--muted); font-weight: 600; }
 .miss-group + .miss-group { margin-top: 16px; padding-top: 4px; border-top: 1px solid #777777; }   /* line between the two groups */
 .chart { position: relative; }
@@ -120,7 +128,7 @@ h1 { font-size: 1.6rem; line-height: 1.2; letter-spacing: -0.02em; font-weight: 
 .est-group .est-reason + .chips { margin-top: 10px; }
 .est-reason b { color: var(--ink); }
 .agree-group { margin: 18px 0 8px; font-size: 0.85rem; font-weight: 650; }
-.agree-chip { display: inline-flex; align-items: baseline; gap: 6px; padding: 3px 10px; border: 1px solid var(--line); border-radius: 999px; background: #fafafa; color: var(--ink); font-size: 0.75rem; line-height: 1.5; text-decoration: none; }
+.agree-chip { display: inline-flex; align-items: baseline; gap: 6px; padding: 4px 13px; border: 1px solid var(--line); border-radius: 999px; background: #fafafa; color: var(--ink); font-size: 1rem; line-height: 1.5; text-decoration: none; }
 /* The scatter spans the box (90% of its width); the notes sit beside the intro only. */
 #agreement > .side-notes { grid-row: 1 / span 3; }
 #agreement > #agree-chart { grid-column: 1 / -1; width: 90%; margin: 6px auto 0; }
@@ -168,7 +176,7 @@ ul.note-list li { margin: 4px 0; }
 .chart-table td.n, .chart-table th.n { text-align: right; font-variant-numeric: tabular-nums; }
 
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
-.chips li { padding: 3px 10px; border: 1px solid var(--line); border-radius: 999px; background: #fafafa; font-size: 0.75rem; line-height: 1.5; }
+.chips li { padding: 4px 13px; border: 1px solid var(--line); border-radius: 999px; background: #fafafa; font-size: 1rem; line-height: 1.5; }
 
 .venn-grid { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
 /* The TF list opens below the chart, full width, so the chart keeps its size. */
@@ -178,7 +186,7 @@ ul.note-list li { margin: 4px 0; }
 .venn-panel .close { float: right; border: 0; background: none; color: var(--muted); font-size: 1.05rem; cursor: pointer; padding: 0 2px; line-height: 1; }
 .venn-panel .close:hover { color: var(--ink); }
 .venn-panel .chips { max-height: 260px; overflow-y: auto; padding-right: 2px; gap: 8px; }
-.venn-panel .chips li { padding: 4px 12px; background: #fff; font-size: 0.9rem; }
+.venn-panel .chips li { padding: 4px 13px; background: #fff; font-size: 1rem; }
 .upset-btn { cursor: pointer; }
 .upset-btn .btn-bg { fill: #ffffff; stroke: var(--axis); }
 .upset-btn .btn-ln { stroke: var(--muted); }
@@ -188,11 +196,11 @@ ul.note-list li { margin: 4px 0; }
 .motif-chips { margin-bottom: 16px; }
 .motif-chips li { padding: 0; border: 0; background: none; }
 .motif-chips { gap: 6px; }
-.motif-btn { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border: 1px solid var(--line); border-radius: 999px; background: #fafafa; color: var(--ink); font-size: 0.75rem; line-height: 1.5; cursor: pointer; text-decoration: none; }
+.motif-btn { display: inline-flex; align-items: center; gap: 6px; padding: 4px 13px; border: 1px solid var(--line); border-radius: 999px; background: #fafafa; color: var(--ink); font-size: 1rem; line-height: 1.5; cursor: pointer; text-decoration: none; }
 .motif-btn:hover, .motif-btn:focus-visible { border-color: #b8b8b8; background: #fff; }
 .dots { display: inline-flex; gap: 3px; }
 .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; flex: none; }
-.tf-group { margin: 0 0 8px; font-size: 0.8rem; font-weight: 650; }
+.tf-group { margin: 0 0 10px; font-size: 1rem; font-weight: 650; }
 #motifs-chart .tf-group { margin: 6px 0 10px; font-size: 1.05rem; }
 .tf-divider { border: 0; border-top: 3px dotted #bf3b4b; margin: 18px 0 8px; }
 .tf-criteria { margin: 0 0 14px; padding-left: 18px; color: #bf3b4b; font-size: 0.75rem; }
@@ -361,13 +369,13 @@ ul.note-list li { margin: 4px 0; }
         <ul class="legend" id="identity-legend"></ul>
         <div class="identity-layout">
           <div class="chart" id="identity-chart"></div>
-          <table class="family-table" id="identity-families"></table>
+          <div>
+            <table class="family-table" id="identity-families"></table>
+            <div class="family-members" id="identity-family-members" aria-live="polite"></div>
+          </div>
         </div>
         <div id="identity-lists"></div>
-        <details class="chart-table">
-          <summary>View as table</summary>
-          <table id="identity-table"></table>
-        </details>
+        <p class="grid-link"><a href="grid.html">See all 124 DAP-seq motifs against all 125 ChIP-seq motifs →</a></p>
       </section>
 
       <section class="card" aria-labelledby="h-uncovered">
@@ -384,17 +392,6 @@ ul.note-list li { margin: 4px 0; }
         <ul class="tf-criteria" id="tflist-criteria"></ul>
         <p class="tf-group" id="tflist-nonreg-head"></p>
         <ul class="chips" id="tflist-nonreg"></ul>
-      </section>
-
-      <section class="card footnotes" aria-labelledby="h-notes">
-        <h2 id="h-notes">How coverage is counted</h2>
-        <ul>
-          <li>A “TF entry” is a distinct <code>tf_name</code> with a base-table record (a row whose method is blank or SELEX). The table lists DeoT and YciT(DeoT) as separate entries although RegulonDB treats them as one TF, and RacR is absent.</li>
-          <li>The RegulonDB restriction keeps entries marked ✓ in the <code>regulondb</code> column.</li>
-          <li id="outside-note"></li>
-          <li>PPTP-seq rows are expression responses, which may reflect indirect regulation; SELEX and ChIP-seq rows are DNA-binding evidence.</li>
-        </ul>
-        <ul class="chips" id="outside-list" style="margin-top: 10px"></ul>
       </section>
     </div>
     <p class="status" id="error" hidden>Could not load <code>data/dataset.csv</code>. Refresh the page to try again.</p>
@@ -978,49 +975,57 @@ function renderIdentity() {
   card.hidden = !id;
   if (!id) return;
   const { tfs, matrix } = id, n = tfs.length;
+  // The grid: the TFs with both motifs, in the same order on both axes, so a TF's own pair is on the diagonal.
+  const all = false;
+  const rowNames = all ? id.full.rows : tfs.map(t => t.name), colNames = all ? id.full.cols : rowNames;
+  const grid = all ? id.full.matrix : matrix, nR = rowNames.length, nC = colNames.length;
+  const rowIndex = new Map(rowNames.map((name, i) => [name, i])), colIndex = new Map(colNames.map((name, i) => [name, i]));
+  const familyOf = new Map(tfs.map(t => [t.name, t.family]));
   const count = test => tfs.filter(test).length;
   const forward = count(t => t.rank_forward === 1), backward = count(t => t.rank_backward === 1);
-  const mated = tfs.filter(t => t.family_mates > 0);
-  const kinForward = mated.filter(t => t.family_rank_forward === 1).length, kinBackward = mated.filter(t => t.family_rank_backward === 1).length;
-  const familyOf = new Map(tfs.map(t => [t.name, t.family]));
+  const mated = tfs.filter(t => t.family_mates > 0);   // TFs with a relative among the ChIP-seq motifs
+  const kinForward = mated.filter(t => t.family_rank_forward === 1).length;
   const misses = tfs.filter(t => t.rank_forward > 1).sort((a, b) => a.rank_forward - b.rank_forward);
-  const kinMisses = misses.filter(t => t.family && familyOf.get(t.best_forward) === t.family);
+  const kinMisses = misses.filter(t => t.best_forward_related);
 
   document.getElementById("identity-note").innerHTML =
-    `Each TF’s DAP-seq motif is compared with all <b>${fmt(n)}</b> ChIP-seq motifs, and the reverse. ` +
+    `Each of the <b>${fmt(n)}</b> TFs with both motifs has its DAP-seq motif compared with all <b>${fmt(id.pool_forward)}</b> ChIP-seq motifs, and its ChIP-seq motif with all <b>${fmt(id.pool_backward)}</b> DAP-seq motifs. ` +
     `If identity survives the change of method, a TF’s own partner is the most similar one (top-1 retrieval): a filled diagonal and little else.`;
-  // Medians, so the first figure is the same number the correlation box above reports.
+  // Medians (the first is the number the correlation box above reports), shown beside the means.
   const median = v => { const a = [...v].sort((x, y) => x - y); return a.length % 2 ? a[(a.length - 1) / 2] : (a[a.length / 2 - 1] + a[a.length / 2]) / 2; };
   const scoresOf = keep => matrix.flatMap((row, i) => row.filter((_, j) => keep(i, j)));
   const related = (i, j) => i !== j && tfs[i].family && tfs[i].family === tfs[j].family;
   const typical = { own: median(scoresOf((i, j) => i === j)), kin: median(scoresOf(related)), other: median(scoresOf((i, j) => i !== j && !related(i, j))) };
   document.getElementById("identity-tiles").innerHTML = [
-    ["A DAP-seq motif finds its own ChIP-seq motif", pct(forward / n), `For ${fmt(forward)} of ${fmt(n)} TFs, the closest of all ${fmt(n)} ChIP-seq motifs is the TF\u2019s own. Guessing would get ${pct(1 / n)}.`],
-    ["A ChIP-seq motif finds its own DAP-seq motif", pct(backward / n), `The same test the other way round: ${fmt(backward)} of ${fmt(n)} TFs.`],
-    ["It beats its relatives too", pct(kinForward / mated.length), `${fmt(mated.length)} TFs have a same-family TF here. For ${fmt(kinForward)} of them, their own motif is still closer than any relative\u2019s.`],
-    ["How similar, typically (median)", typical.own.toFixed(2), `A TF\u2019s two motifs: ${typical.own.toFixed(2)}, the same median as in the box above. Two TFs of one family: ${typical.kin.toFixed(2)}. Two unrelated TFs: ${typical.other.toFixed(2)}.`],
+    ["Own ChIP-seq motif scores highest", `${fmt(forward)}/${fmt(n)}`, `Starting from each TF’s DAP-seq motif: of all ${fmt(id.pool_forward)} ChIP-seq motifs, its own is the most similar.`],
+    ["Own DAP-seq motif scores highest", `${fmt(backward)}/${fmt(n)}`, `Starting from each TF’s ChIP-seq motif: of all ${fmt(id.pool_backward)} DAP-seq motifs, its own is the most similar.`],
+    ["Own motif scores highest among relatives", `${fmt(kinForward)}/${fmt(mated.length)}`, `${fmt(mated.length)} TFs have a same-family TF among the ChIP-seq motifs. For ${fmt(kinForward)}, their own is still more similar than any relative’s.`],
+    ["Similarity of a TF\u2019s own two motifs", `<small>Median:</small> ${typical.own.toFixed(2)}<br><small>Mean:</small> ${id.mean_own.toFixed(2)}`, ""],
   ].map(([lbl, num, sub]) => `<div class="tile"><p class="lbl">${lbl}</p><div class="num">${num}</div><div class="sub">${sub}</div></div>`).join("");
   document.getElementById("identity-legend").innerHTML =
     `<li>Correlation:</li>` + [...SEQ_STEPS].reverse().map(([, color, label]) => `<li><span class="swatch" style="background:${color}"></span>${label}</li>`).join("") +
     `<li><span class="swatch" style="background:#f6f6f4; border: 1px solid #c9c9c9"></span>below ${SEQ_STEPS[SEQ_STEPS.length - 1][0]}</li>` +
-    `<li><svg width="12" height="12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/></svg>TFs of one protein family (numbered; see the table)</li>`;
+    `<li><svg width="12" height="12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" fill="none" stroke="#8a8a8a" stroke-width="1.5"/></svg>TFs of one protein family (numbered; see the table)</li>` +
+    (all ? `<li><svg width="12" height="12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" fill="none" stroke="#111" stroke-width="1.5" stroke-dasharray="3 2"/></svg>The ${fmt(n)} TFs with both motifs</li>` : "");
 
   // The matrix: one row per DAP-seq motif, one column per ChIP-seq motif, same TF order
   // (families grouped), so a TF's own pair lies on the diagonal.
   const chart = document.getElementById("identity-chart");
-  const W = Math.max(360, Math.min(chart.clientWidth || 760, 860)), left = 96, top = 90, right = 16;   // room for the axis titles
-  const cell = (W - left - right) / n, side = cell * n, H = top + side + 8;
-  const parts = [`<rect x="${left}" y="${top}" width="${side}" height="${side}" fill="#f6f6f4"/>`];
-  matrix.forEach((row, i) => row.forEach((v, j) => {
+  const W = Math.max(360, Math.min(chart.clientWidth || 760, 860)), left = 104, top = 98, right = 12;   // room for the axis titles
+  const cell = (W - left - right) / nC, side = cell * nC, sideH = cell * nR, H = top + sideH + 8;
+  const parts = [`<rect x="${left}" y="${top}" width="${side}" height="${sideH}" fill="#f6f6f4"/>`];
+  grid.forEach((row, i) => row.forEach((v, j) => {
     const color = seqColor(v);
     if (color) parts.push(`<rect x="${(left + j * cell).toFixed(2)}" y="${(top + i * cell).toFixed(2)}" width="${cell.toFixed(2)}" height="${cell.toFixed(2)}" fill="${color}"/>`);
   }));
-  const size = Math.min(9.5, cell * 0.92);
-  tfs.forEach((t, i) => {
-    const mid = (i + 0.5) * cell;
-    parts.push(`<text x="${left - 5}" y="${top + mid}" text-anchor="end" dominant-baseline="central" font-size="${size}" fill="#777" class="row-label" data-i="${i}">${escape(t.name)}</text>`);
-    parts.push(`<text transform="translate(${left + mid} ${top - 5}) rotate(-90)" dominant-baseline="central" font-size="${size}" fill="#777" class="col-label" data-i="${i}">${escape(t.name)}</text>`);
-  });
+  // TF names along both axes, when the cells are tall enough to read them; in the full view
+  // they are too small, so the name appears when a row or column is pointed at instead.
+  const size = Math.min(12, cell * 1.0), labelled = cell >= 7;
+  if (labelled) {
+    rowNames.forEach((name, i) => parts.push(`<text x="${left - 5}" y="${top + (i + 0.5) * cell}" text-anchor="end" dominant-baseline="central" font-size="${size}" fill="#333">${escape(name)}</text>`));
+    colNames.forEach((name, i) => parts.push(`<text transform="translate(${left + (i + 0.5) * cell} ${top - 5}) rotate(-90)" dominant-baseline="central" font-size="${size}" fill="#333">${escape(name)}</text>`));
+  }
+  if (all) parts.push(`<rect x="${left - 0.5}" y="${top - 0.5}" width="${n * cell + 1}" height="${n * cell + 1}" fill="none" stroke="#111" stroke-width="1.25" stroke-dasharray="4 3"/>`);
   // A numbered frame around each family's block on the diagonal; the table beside the
   // matrix says which family each number is and lists its TFs.
   const families = [];
@@ -1038,19 +1043,21 @@ function renderIdentity() {
     `<caption>Protein families</caption><thead><tr><th>No.</th><th>Family</th><th class="n">TFs</th></tr></thead><tbody>` +
     families.map((f, k) => `<tr data-k="${k}" tabindex="0" role="button" aria-pressed="false" title="${escape(f.members.join(", "))} \u2014 click to highlight on the matrix"><td class="no">${k + 1}</td><td>${escape(f.name)}</td><td class="n">${f.members.length}</td></tr>`).join("") + `</tbody>`;
   // Axis titles: what the rows and the columns are.
-  parts.push(`<text x="${left + side / 2}" y="13" text-anchor="middle" font-size="12" font-weight="650" fill="#222">ChIP-seq</text>`);
-  parts.push(`<text transform="translate(13 ${top + side / 2}) rotate(-90)" text-anchor="middle" font-size="12" font-weight="650" fill="#222">DAP-seq</text>`);
-  chart.innerHTML = `<svg viewBox="0 0 ${W} ${H}" style="max-width: ${W}px" role="img" aria-label="Heatmap of the correlation between every TF's DAP-seq motif and every TF's ChIP-seq motif; ${forward} of ${n} rows have their highest value on the diagonal">${parts.join("")}</svg>`;
+  parts.push(`<text x="${left + side / 2}" y="16" text-anchor="middle" font-size="17" font-weight="700" fill="#222">ChIP-seq</text>`);
+  parts.push(`<text transform="translate(16 ${top + sideH / 2}) rotate(-90)" text-anchor="middle" font-size="17" font-weight="700" fill="#222">DAP-seq</text>`);
+  chart.innerHTML = `<svg viewBox="0 0 ${W} ${H}" style="max-width: ${W}px" role="img" aria-label="Heatmap of the correlation between ${nR} DAP-seq motifs (rows) and ${nC} ChIP-seq motifs (columns); for ${forward} of the ${n} TFs with both, their own pair is the highest in its row">${parts.join("")}</svg>`;
   const svg = chart.querySelector("svg"), tip = makeTooltip(chart);
   svg.addEventListener("mousemove", e => {
     const box = svg.getBoundingClientRect(), k = W / box.width;
     const j = Math.floor(((e.clientX - box.left) * k - left) / cell), i = Math.floor(((e.clientY - box.top) * k - top) / cell);
-    if (i < 0 || j < 0 || i >= n || j >= n) { tip.hide(); return; }
-    const kin = i !== j && tfs[i].family && tfs[i].family === tfs[j].family;
-    tip.show(`${tfs[i].name} (DAP-seq) vs ${tfs[j].name} (ChIP-seq): ${matrix[i][j].toFixed(2)}` +
-      (i === j ? " · same TF" : kin ? ` · same family (${tfs[i].family})` : ""), e.clientX, e.clientY);
+    if (i < 0 || j < 0 || i >= nR || j >= nC) { tip.hide(); markCross(-1, -1); return; }
+    markCross(i, j);   // the row and column under the pointer
+    const a = rowNames[i], b = colNames[j];
+    const kin = a !== b && familyOf.get(a) && familyOf.get(a) === familyOf.get(b);
+    tip.show(`${a} (DAP-seq) vs ${b} (ChIP-seq): ${grid[i][j].toFixed(2)}` +
+      (a === b ? " \u00b7 same TF" : kin ? ` \u00b7 same family (${familyOf.get(a)})` : ""), e.clientX, e.clientY);
   });
-  svg.addEventListener("mouseleave", () => tip.hide());
+  svg.addEventListener("mouseleave", () => { tip.hide(); markCross(-1, -1); });
 
   // Clicking a family in the table highlights its frame on the matrix (click again to clear);
   // pointing at a row previews it. The choice survives a redraw on resize.
@@ -1063,6 +1070,11 @@ function renderIdentity() {
       if (on) svg.appendChild(frame);   // draw the highlighted frame over its neighbors
     }
     famRows.forEach((row, k) => row.setAttribute("aria-pressed", k === identityFamily));
+    // The clicked family's TFs, listed under the table.
+    const picked = families[identityFamily];
+    document.getElementById("identity-family-members").innerHTML = picked
+      ? `<p class="family-members-title">${escape(picked.name)} family \u00b7 ${fmt(picked.members.length)} TFs</p><ul class="chips">${picked.members.map(m => `<li>${escape(m)}</li>`).join("")}</ul>`
+      : "";
   };
   famRows.forEach((row, k) => {
     const toggle = () => { identityFamily = identityFamily === k ? -1 : k; showFamily(-1); };
@@ -1075,42 +1087,37 @@ function renderIdentity() {
 
   // The TFs whose own ChIP-seq motif was not the most similar, in two groups: those that
   // retrieved a relative (expected: related TFs bind similar sequences) and those that did not.
-  const indexOf = new Map(tfs.map((t, i) => [t.name, i]));
-  const missChip = t => `<li class="miss-chip" tabindex="0" data-row="${indexOf.get(t.name)}" data-col="${indexOf.get(t.best_forward)}" title="${escape(t.name)}\u2019s own ChIP-seq motif ranks ${t.rank_forward} of ${n}">${escape(t.name)} <span class="to">\u2192 ${escape(t.best_forward)}</span></li>`;
+  const onGrid = t => colIndex.has(t.best_forward);   // the smaller grid only holds the TFs with both motifs
+  const missChip = t => `<li class="miss-chip" tabindex="0" data-row="${escape(t.name)}" data-col="${escape(t.best_forward)}" ` +
+    `title="${escape(t.name)}’s own ChIP-seq motif ranks ${t.rank_forward} of ${id.pool_forward}">${escape(t.name)} <span class="to">→ ${escape(t.best_forward)}${onGrid(t) ? "" : "*"}</span></li>`;
   const missGroup = (title, list) => list.length
     ? `<div class="miss-group"><p class="agree-group">${title} \u00b7 ${fmt(list.length)} TFs</p><ul class="chips">${list.map(missChip).join("")}</ul></div>` : "";
-  const example = kinMisses[0] || misses[0];   // the pair used to explain the notation
   document.getElementById("identity-lists").innerHTML = misses.length
     ? `<p class="miss-title">${fmt(misses.length)} TFs matched another TF better than themselves</p>` +
-      `<p class="miss-key">Read \u201c${escape(example.name)} \u2192 ${escape(example.best_forward)}\u201d as: ${escape(example.name)}\u2019s DAP-seq motif should be most similar to ${escape(example.name)}\u2019s own ChIP-seq motif, but ${escape(example.best_forward)}\u2019s ChIP-seq motif is more similar.</p>` +
       missGroup("Matched a relative (same protein family)", kinMisses) +
-      missGroup("Matched an unrelated TF", misses.filter(t => !kinMisses.includes(t)))
+      missGroup("Matched an unrelated TF", misses.filter(t => !kinMisses.includes(t))) +
+      (misses.some(t => !onGrid(t)) ? `<p class="miss-key">* Has a ChIP-seq motif only, so it is not on the grid, which shows the ${fmt(n)} TFs with both motifs.</p>` : "")
     : "";
-  // Pointing at (or tabbing to) one of those TFs marks its row and the column it matched on
-  // the matrix, with a ring around the cell where they cross.
+  // Pointing at a cell of the matrix, or at (or tabbing to) one of those TFs, marks the row and
+  // the column on the matrix, with a ring around the cell where they cross.
   const cross = document.createElementNS("http://www.w3.org/2000/svg", "g");
   cross.setAttribute("pointer-events", "none");
   svg.appendChild(cross);
   const markCross = (i, j) => {
-    const on = i >= 0;
-    cross.innerHTML = !on ? "" :
-      `<rect x="${left}" y="${top + i * cell}" width="${side}" height="${cell}" fill="#eb6834" fill-opacity="0.22"/>` +
-      `<rect x="${left + j * cell}" y="${top}" width="${cell}" height="${side}" fill="#eb6834" fill-opacity="0.22"/>` +
-      `<rect x="${left + j * cell - 1.5}" y="${top + i * cell - 1.5}" width="${cell + 3}" height="${cell + 3}" fill="none" stroke="#111" stroke-width="2"/>`;
-    svg.querySelectorAll(".row-label").forEach(el => el.classList.toggle("on", on && Number(el.dataset.i) === i));
-    svg.querySelectorAll(".col-label").forEach(el => el.classList.toggle("on", on && Number(el.dataset.i) === j));
+    const name = (text, attrs) => `<text ${attrs} font-size="11" font-weight="700" fill="#111" paint-order="stroke" stroke="#fff" stroke-width="3">${escape(text)}</text>`;
+    cross.innerHTML = !(i >= 0) ? "" :
+      `<rect x="${left}" y="${top + i * cell}" width="${side}" height="${cell}" fill="#eb6834" fill-opacity="0.3"/>` +
+      name(rowNames[i], `x="${left - 5}" y="${top + (i + 0.5) * cell}" text-anchor="end" dominant-baseline="central"`) +
+      (j >= 0 ? `<rect x="${left + j * cell}" y="${top}" width="${cell}" height="${sideH}" fill="#eb6834" fill-opacity="0.3"/>` +
+        `<rect x="${left + j * cell - 1.5}" y="${top + i * cell - 1.5}" width="${cell + 3}" height="${cell + 3}" fill="none" stroke="#111" stroke-width="2"/>` +
+        name(colNames[j], `transform="translate(${left + (j + 0.5) * cell} ${top - 5}) rotate(-90)" dominant-baseline="central"`) : "");
   };
   for (const chip of document.querySelectorAll("#identity-lists .miss-chip")) {
-    const show = () => markCross(Number(chip.dataset.row), Number(chip.dataset.col)), hide = () => markCross(-1, -1);
+    const at = (index, key) => index.has(key) ? index.get(key) : -1;
+    const show = () => markCross(at(rowIndex, chip.dataset.row), at(colIndex, chip.dataset.col)), hide = () => markCross(-1, -1);
     chip.addEventListener("mouseenter", show); chip.addEventListener("focus", show);
     chip.addEventListener("mouseleave", hide); chip.addEventListener("blur", hide);
   }
-
-  const rankCell = (rank, best, own) => `<td class="n">${rank}</td><td>${rank === 1 ? "—" : escape(best)}</td>`;
-  document.getElementById("identity-table").innerHTML =
-    `<thead><tr><th>TF</th><th>Family</th><th class="n">Rank of own ChIP-seq motif</th><th>Retrieved instead</th><th class="n">Rank of own DAP-seq motif</th><th>Retrieved instead</th><th class="n">Rank among family (both ways)</th></tr></thead><tbody>` +
-    tfs.map(t => `<tr><td>${escape(t.name)}</td><td>${escape(t.family || "—")}</td>${rankCell(t.rank_forward, t.best_forward)}${rankCell(t.rank_backward, t.best_backward)}` +
-      `<td class="n">${t.family_mates ? `${t.family_rank_forward} · ${t.family_rank_backward} of ${t.family_mates + 1}` : "—"}</td></tr>`).join("") + `</tbody>`;
 }
 
 // ---- 3. Venn: shared coverage across datasets (no RegulonDB restriction) ----
@@ -1447,9 +1454,6 @@ function renderTiles(model) {
 
 function renderLists(model) {
   document.getElementById("uncovered-list").innerHTML = model.uncoveredReg.map(n => `<li>${escape(n)}</li>`).join("");
-  document.getElementById("outside-note").textContent =
-    `${fmt(model.outside.length)} TF names in the datasets are not TF-table entries (complex subunits, toxin–antitoxin genes, and uncharacterized y-genes). They are excluded from the coverage figures:`;
-  document.getElementById("outside-list").innerHTML = model.outside.map(n => `<li>${escape(n)}</li>`).join("");
 }
 
 // ---- Boot -------------------------------------------------------------------

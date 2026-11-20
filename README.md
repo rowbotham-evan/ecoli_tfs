@@ -42,6 +42,13 @@ Pages are in `html/`, scripts and styles in `assets/`, data in `data/`.
 
 Each source's provenance is in `data/sources/<source>/README.md`.
 
+## How coverage is counted
+
+- A **TF entry** is a distinct `tf_name` with a base-table record (a row whose method is blank or SELEX). DeoT and YciT(DeoT) are listed separately although RegulonDB treats them as one TF, and RacR is absent.
+- The **RegulonDB** figures keep entries marked ✓ in the `regulondb` column.
+- PPTP-seq rows are expression responses, which may be indirect; SELEX, DAP-seq and ChIP-seq rows are DNA-binding evidence.
+- 30 TF names in the datasets are not TF-table entries (complex subunits, toxin–antitoxin genes, uncharacterized y-genes) and are left out of the coverage figures: AaeR, BglJ, CsiR, DicC, DinJ, FlhC, FlhD, GcvR, HigB, HipA, Hns, HupA, HupB, IhfA, IhfB, MazF, PdeL, RacR, RcsA, RelE, Rob, SfsB, SgcR, Sxy, Ttk, UidR, YafN, YafQ, YdaS, YoeB.
+
 ## Rules to keep
 
 - **Record IDs are permanent.** Keep existing `record_id` values, number new records above 13475, and never reuse one.
