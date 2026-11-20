@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(open -R *)",
+      "Bash(open http://localhost*)",
+      "Bash(open http://127.0.0.1*)"
+    ]
+  }
+}

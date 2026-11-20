@@ -1,0 +1,18 @@
+{
+  "source": "RegulonDB TF-RISet (regulatory interactions between a transcription factor and its regulated promoter, gene or transcription unit)",
+  "file_id": "RDBECOLIDLF00002",
+  "file_name": "TF-RISet",
+  "regulondb_release": "14.5.1",
+  "file_version": "1.0",
+  "file_creation_date": "11-11-2026",
+  "endpoint": "https://regulondb.ccg.unam.mx/graphql",
+  "query": "{ getDataOfFile(fileName: \"TF-RISet\") { _id fileName content columnsDetails creationDate version rdbVersion description license citation } }",
+  "retrieved": "2026-11-18",
+  "tf_riset_sha256": "389ad0f2b65009b2f789b87ff6d99132c85f2fd7451bc7eb19d203745320bbe1",
+  "interaction_count": 5785,
+  "genome": "Escherichia coli K-12 MG1655, U00096.3",
+  "citation": "Salgado H, Gama-Castro S, et al. RegulonDB v12.0: a comprehensive resource of transcriptional regulation in E. coli K-12. Nucleic Acids Research, 2023, gkad1072. https://doi.org/10.1093/nar/gkad1072",
+  "license": "RegulonDB is free for academic/noncommercial use User is not entitled to change or erase data sets of the RegulonDB database or to eliminate copyright notices from RegulonDB. Furthermore, User is not entitled to expand RegulonDB or to integrate RegulonDB partly or as a whole into other databank systems, without prior written consent from CCG-UNAM. Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
+  "license_url": "https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
+  "columns": "# Columns:\n# (1) id. Regulatory interaction (RI) identifier assigned by RegulonDB\n# (2) type. Regulatory interaction type [TF-promoter, TF-TU, tf-gene,sRNA-promoter, sRNA-TU, sRNA-gene, compound-promoter, compound-TU, compound-gene, regulator-TU, regulator-gene] [tf-promoter, tf-tu, tf-gene]\n# (3) tfId. Transcription Factor (TF) identifier assigned by RegulonDB\n# (4) tfName. Regulator name\n# (5) cnfName. regulator active conformation name\n# (6) tfrsId. regulator regulatory site (TFRS) identifier assigned by RegulonDB\n# (7) tfrsLeft. TFRS left end position in the genome\n# (8) tfrsRight. TFRS right end position in the genome\n# (9) strand. DNA strand where the TFRS is located\n# (10) tfrsSeq. TFRS sequence\n# (11) riFunction. Gene expression effect caused by the TF bound to the TFRS\n# (12) promoterId. Promoter Identifier assigned by RegulonDB\n# (13) promoterName. Promoter name\n# (14) tss. Transcription start site (+1) position in the genome\n# (15) sigmaF. Sigma Factor that recognize the promoter\n# (16) DistToPm. Relative distance from the center position of TFRS to the Transcription Start Site\n# (17) firstGene. first transcribed gene name\n# (18) tfrsDistTo1Gene. Relative distance from center position of TFRS to the start of first gene\n# (19) targetTuOrGene. Transcription unit or gene (id:name) regulated by the TF\n# (20) confidenceLevel. RI confidence level (Values: Confirmed, Strong, Weak, Unknown:?))\n# (21) tfrsEvidence. Evidence that supports the existence of the TFRS [EvidenceCode|EvidenceType(C:confirmed S:strong W:weak)]]\n# (22) riEvidence. Evidence that supports the RI function [EvidenceCode|EvidenceType(C:confirmed S:strong W:weak)]\n# (23) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n# (24) riEvTech. Evidence related to the type of technology used to determine the RI\n# (25) riEvCategory. Evidence  were categorized in classical, ht or non-experimental\n# (26) tfrsPMIDS. PMIDS of the TFRS\n# (27) riPMIDS. PMIDS of the regulatory interaction"
+}

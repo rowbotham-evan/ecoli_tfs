@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TF Motifs</title>
+  <style>
+:root {
+  color-scheme: light;
+  --ink: #222222;
+  --muted: #666666;
+  --line: #e5e5e5;
+  --accent: #333333;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #ffffff;
+  color: var(--ink);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+main { max-width: 900px; margin: 0 auto; padding: 28px 40px 48px; }
+a { color: var(--accent); text-underline-offset: 3px; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid #555555; outline-offset: 3px; }
+.back { margin: 0 0 18px; font-size: 0.85rem; }
+h1 { font-size: 3rem; line-height: 1.1; letter-spacing: -0.03em; font-weight: 700; margin: 0 0 10px; }   /* the TF's name */
+.intro { margin: 0 0 24px; color: var(--muted); max-width: 64ch; }
+.intro b { color: var(--ink); font-weight: 650; }
+.intro { line-height: 1.75; }
+/* A checked or empty box, as tall as the text itself (1em: from the bottom of a "p" to the top
+   of a "d") and centered on it. The tick is positioned out of flow so both kinds of box align
+   the same way. */
+.intro .tick {
+  display: inline-block; box-sizing: border-box; position: relative; width: 1em; height: 1em; margin-left: 3px;
+  border: 1.5px solid #8a8a8a; border-radius: 3px; vertical-align: -0.16em;
+}
+.intro .tick::before {
+  content: attr(data-mark); position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  color: #1a8f5c; font-size: 0.8em; font-weight: 700; line-height: 1;
+}
+/* Each section (one per motif source, then the correlation) sits in its own box, like the TF box on the Database page. */
+.card { margin-bottom: 28px; padding: 24px 28px; border: 2px solid #9a9a9a; border-radius: 10px; }
+@media (max-width: 540px) { .card { padding: 18px 16px; } }
+.card h2 { display: flex; align-items: center; gap: 9px; margin: 0 0 4px; font-size: 1.05rem; font-weight: 650; }
+.card .note { margin: 0 0 14px; color: var(--muted); font-size: 0.82rem; max-width: 72ch; }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex: none; }
+/* A motif's details, as a two-column table: the label, then the value. */
+.facts { width: 100%; border-collapse: collapse; border: 1px solid #c9c9c9; font-size: 0.88rem; }
+.facts th, .facts td { padding: 7px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.facts tr:last-child th, .facts tr:last-child td { border-bottom: 0; }
+.facts th { width: 1%; white-space: nowrap; background: #f6f6f6; border-right: 1px solid var(--line); color: var(--muted); font-weight: 500; }
+.facts td { overflow-wrap: anywhere; }
+.flag { margin: 14px 0 0; padding: 10px 12px; border-radius: 8px; background: #fdf3dd; color: #6b4a00; font-size: 0.82rem; max-width: 72ch; }
+code, .seq { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.85em; }
+.sites { border-collapse: collapse; width: 100%; font-size: 0.82rem; }
+.sites th, .sites td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line); }
+.sites th { color: #555; font-size: 0.72rem; font-weight: 650; }
+.sites td.n, .sites th.n { text-align: right; font-variant-numeric: tabular-nums; }
+.table-wrap { overflow-x: auto; }
+.status { color: var(--muted); font-size: 0.9rem; }
+.agree-row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 20px 40px; }
+.agree-score { min-width: 150px; }
+.agree-score .num { font-size: 2.6rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; }
+.agree-score .lbl { font-size: 0.8rem; font-weight: 650; }
+.agree-score .sub { margin-top: 8px; color: var(--muted); font-size: 0.8rem; max-width: 26ch; }
+.agree-fig { flex: 1 1 340px; max-width: 520px; margin: 0; }
+.agree-fig svg { display: block; width: 100%; height: auto; }
+.agree-fig figcaption { margin-top: 6px; color: var(--muted); font-size: 0.78rem; }
+.agree-key { display: inline-flex; align-items: center; gap: 5px; margin-right: 10px; }
+.agree-key i { width: 9px; height: 9px; border-radius: 50%; }
+.logo { margin: 18px 0 0; }
+.logo svg { display: block; width: 100%; height: auto; }
+.logo figcaption { margin-top: 6px; color: var(--muted); font-size: 0.78rem; max-width: 72ch; }
+.logo details summary { margin-top: 8px; color: var(--accent); font-size: 0.78rem; text-decoration: underline; text-underline-offset: 3px; width: fit-content; cursor: pointer; }
+.logo details table { border-collapse: collapse; margin-top: 8px; font-size: 0.75rem; font-variant-numeric: tabular-nums; }
+.logo details th, .logo details td { padding: 4px 9px; border-bottom: 1px solid var(--line); text-align: right; }
+.logo details th { color: #555; font-weight: 650; }
+.published-logos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 16px; margin: 18px 0 0; }
+.published-logos figure { margin: 0; }
+.published-logos img { display: block; width: 100%; max-width: 440px; height: auto; }
+.published-logos figcaption { margin-top: 6px; color: var(--muted); font-size: 0.78rem; }
+.credit { grid-column: 1 / -1; margin: 0; color: var(--muted); font-size: 0.75rem; }
+details.published { margin: 14px 0 0; }
+.plot-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 18px; margin: 18px 0 0; align-items: start; }
+.plot-pair .logo, .plot-pair figure { margin: 0; }
+.plot-title { margin: 0 0 6px; font-size: 0.85rem; font-weight: 650; }
+.plot-pair img { display: block; width: 100%; height: auto; }
+.site-matrix { margin: 18px 0 0; }
+details.published > summary { color: var(--accent); font-size: 0.8rem; text-decoration: underline; text-underline-offset: 3px; width: fit-content; cursor: pointer; }
+.zoom { position: relative; display: block; width: 100%; margin: 0; padding: 0; border: 0; border-radius: 6px; background: none; font: inherit; text-align: left; cursor: zoom-in; }
+.zoom:hover, .zoom:focus-visible { background: #fafaf8; }
+.zoom-hint { position: absolute; top: 6px; right: 6px; padding: 1px 8px; border: 1px solid var(--line); border-radius: 999px; background: #ffffff; color: var(--muted); font-size: 0.7rem; }
+.zoom:hover .zoom-hint, .zoom:focus-visible .zoom-hint { border-color: var(--accent); color: var(--ink); }
+.zoom-dialog { width: min(96vw, 1400px); max-height: 92vh; padding: 0; border: 0; border-radius: 12px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25); }
+.zoom-dialog::backdrop { background: rgba(20, 20, 20, 0.55); }
+.zoom-inner { padding: 16px 22px 22px; }
+.zoom-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.zoom-head h2 { margin: 0; font-size: 1rem; font-weight: 650; }
+.zoom-close { border: 0; background: none; color: var(--muted); font-size: 1.6rem; line-height: 1; cursor: pointer; padding: 0 4px; }
+.zoom-close:hover { color: var(--ink); }
+.zoom-body svg { display: block; width: 100%; height: auto; }
+.zoom-body img { display: block; width: 100%; max-width: 880px; height: auto; margin: 0 auto; }   /* 2x the 440-px original */
+.zoom-cap { margin: 10px 0 0; color: var(--muted); font-size: 0.82rem; max-width: 90ch; }
+@media (max-width: 900px) { main { padding: 24px; } }
+@media (max-width: 540px) {
+  main { padding: 20px 14px 32px; }
+  .facts th { white-space: normal; }
+}
+  </style>
+  <link rel="stylesheet" href="../assets/nav.css">
+</head>
+<body>
+  <header class="site-bar">
+    <div class="site-bar-inner">
+      <p class="site-title"><a href="./">Transcription Factor Database <em>Escherichia coli (E. coli)</em></a></p>
+      <nav class="site-tabs" aria-label="Main navigation">
+        <a href="./">Database</a>
+        <a href="coverage.html">Coverage</a>
+        <a href="notes.html">Notes</a>
+      </nav>
+      <a class="site-download" href="../data/dataset.csv" download>Download CSV<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8M4.5 6.8 8 10.3l3.5-3.5M2.5 13.5h11"/></svg></a>
+    </div>
+  </header>
+  <main>
+    <p class="back"><a id="back" href="coverage.html#motifs">← All motifs</a></p>
+    <header>
+      <h1 id="tf-name">Loading…</h1>
+      <p class="intro" id="intro"></p>
+    </header>
+    <div id="sources"></div>
+    <section class="card" id="agree-card" aria-labelledby="h-agree" hidden>
+      <h2 id="h-agree">Correlation between the two motifs</h2>
+      <p class="note" id="agree-note"></p>
+      <div class="agree-row">
+        <div class="agree-score"><div class="num" id="agree-num"></div><div class="lbl">correlation</div><div class="sub" id="agree-sub"></div></div>
+        <figure class="agree-fig"><div id="agree-plot"></div><figcaption id="agree-cap"></figcaption></figure>
+      </div>
+    </section>
+    <section class="card" id="sites-card" aria-labelledby="h-sites" hidden>
+      <h2 id="h-sites">Binding sites in this database</h2>
+      <p class="note" id="sites-note"></p>
+      <div class="table-wrap"><table class="sites" id="sites"></table></div>
+    </section>
+    <dialog class="zoom-dialog" id="zoom" aria-labelledby="zoom-title">
+      <div class="zoom-inner">
+        <div class="zoom-head"><h2 id="zoom-title"></h2><button class="zoom-close" type="button" aria-label="Close">×</button></div>
+        <div class="zoom-body" id="zoom-body"></div>
+        <p class="zoom-cap" id="zoom-cap"></p>
+      </div>
+    </dialog>
+    <p class="status" id="error" hidden>Could not load <code>data/motifs.csv</code> or <code>data/dataset.csv</code>. Refresh the page to try again.</p>
+  </main>
+
+  <script src="../assets/logo.js?v=2"></script>
+  <script src="../assets/motif-agreement.js?v=2"></script>
+  <script>
+// Shows where one TF's motifs come from: ?tf=<name>, matched against data/motifs.csv.
+// Colors and method names mirror coverage.html.
+const METHOD_NAMES = { SELEX: "gSELEX", CHIP: "ChIP-seq", PPTP: "PPTP-seq", DAP: "DAP-seq" };
+const SET_COLORS = { SELEX: "#2a78d6", PPTP: "#eb6834", CHIP: "#1baf7a", DAP: "#6250d6" };
+const SOURCE_ORDER = ["Baumgart et al. 2021", "Lally et al. 2025", "Fitzgerald et al. 2023"];
+// How each paper computed its motifs (see the source READMEs under data/sources/). Trusted HTML.
+const HOW = {
+  "Baumgart et al. 2021": "MEME (v4.12.0) on in vitro DAP-seq peak summits pooled across 48 genomes, so most sites are not <i>E.&nbsp;coli</i> DNA. Up to 50 sites per TF.",
+  "Lally et al. 2025": "A 25-bp energy matrix learned by BoltzNet from in vivo ChIP-seq coverage (M9 glycerol). The frequency matrix counts bases in the TF's high-scoring peak sequences. Published as images; numeric matrices are on the authors' BoltzNet site.",
+  "Fitzgerald et al. 2023": "MEME (v5.1.0) on 100-bp regions around the 65 PhoB ChIP-seq peaks (low phosphate); 59 contain the motif.",
+};
+const LALLY_CREDIT = `Images: Lally et al. 2025, Supplementary Data 3, reproduced unmodified under ` +
+  `<a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a>.`;
+const LINK_LABELS = {
+  "Baumgart et al. 2021": "Supplementary Data 2 (zip, 1 MB)",
+  "Lally et al. 2025": "Supplementary Data 3 (xlsx, 3.6 MB)",
+  "Fitzgerald et al. 2023": "Table 1 (PubMed Central)",
+};
+
+function parseCSV(text) {
+  const rows = [];
+  let row = [], field = "", quoted = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (quoted) {
+      if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
+      else if (c === '"') quoted = false;
+      else field += c;
+    } else if (c === '"') quoted = true;
+    else if (c === ",") { row.push(field); field = ""; }
+    else if (c === "\n" || c === "\r") {
+      if (c === "\r" && text[i + 1] === "\n") i++;
+      row.push(field); rows.push(row); row = []; field = "";
+    } else field += c;
+  }
+  if (field || row.length) { row.push(field); rows.push(row); }
+  return rows.filter(r => r.some(v => v !== ""));
+}
+function records(text) {
+  const [header, ...rows] = parseCSV(text);
+  return rows.map(r => Object.fromEntries(header.map((h, i) => [h, r[i] || ""])));
+}
+const escape = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fmt = n => n.toLocaleString("en-US");
+const plural = (n, word) => `${fmt(n)} ${word}${n === 1 ? "" : "s"}`;
+const methodLabel = m => METHOD_NAMES[m] || m;
+const dot = m => `<span class="dot" style="background:${SET_COLORS[m] || "#898781"}" aria-hidden="true"></span>`;
+// Logo drawing lives in assets/logo.js, shared with the database page's TF dashboard.
+const { frequencies, zoomButton } = Logo;
+const logoBlock = Logo.sequence, energyLogoBlock = Logo.energy;
+
+function sci(v) {
+  const x = Number(v);
+  if (!v || !isFinite(x) || x === 0) return escape(v);
+  const [m, e] = x.toExponential(1).split("e");
+  return `${m} × 10<sup>${Number(e)}</sup>`;
+}
+
+// Reached from a TF's dashboard on the database page (?from=database): the back link
+// returns to that TF's dashboard instead of the Coverage page's motif list.
+{
+  const query = new URLSearchParams(location.search);
+  if (query.get("from") === "database" && query.get("tf")) {
+    const back = document.getElementById("back");
+    back.href = `./?tf=${encodeURIComponent(query.get("tf"))}`;
+    back.textContent = `← Back to ${query.get("tf")} in the database`;
+    // Coming straight from the database page, go back in history instead, so its
+    // method and medium filters are restored along with the TF.
+    back.addEventListener("click", e => {
+      let fromDatabase = false;
+      try {
+        const ref = new URL(document.referrer);
+        fromDatabase = ref.origin === location.origin && new URLSearchParams(ref.search).has("tf");
+      } catch {}
+      if (fromDatabase && history.length > 1) { e.preventDefault(); history.back(); }
+    });
+  }
+}
+
+function render(motifs, dataset, matrices) {
+  const wanted = new URLSearchParams(location.search).get("tf") || "";
+  let list = motifs.filter(r => r.tf_name === wanted);
+  if (!list.length) list = motifs.filter(r => r.tf_name.toLowerCase() === wanted.toLowerCase());
+  const nameEl = document.getElementById("tf-name");
+  const intro = document.getElementById("intro");
+  if (!list.length) {
+    nameEl.textContent = wanted ? wanted : "No TF selected";
+    intro.innerHTML = wanted
+      ? `No motif from the source papers is listed for <b>${escape(wanted)}</b>.`
+      : `Pick a TF from the <a href="coverage.html#motifs">motif list</a>.`;
+    document.title = "TF Motifs";
+    return;
+  }
+  const name = list[0].tf_name;
+  list.sort((a, b) => SOURCE_ORDER.indexOf(a.paper) - SOURCE_ORDER.indexOf(b.paper));
+  nameEl.textContent = name;
+  document.title = `${name} · TF Motifs`;
+
+  // TF status and dataset records, counted the same way as the Coverage page.
+  const rows = dataset.filter(r => r.tf_name === name);
+  const methodOrder = ["SELEX", "PPTP", "DAP", "CHIP"];   // as on the Coverage page
+  const methods = [...new Set(rows.map(r => r.method).filter(Boolean))]
+    .sort((a, b) => (methodOrder.indexOf(a) + 1 || 99) - (methodOrder.indexOf(b) + 1 || 99));
+  const isReg = rows.some(r => r.regulondb === "✓");
+  // Three lines: which methods have a motif, whether RegulonDB lists the TF, and which
+  // datasets have records for it.
+  const mark = yes => `<span class="tick" role="img" aria-label="${yes ? "yes" : "no"}" data-mark="${yes ? "✓" : ""}"></span>`;   // a checked or an empty box
+  intro.innerHTML =
+    `<b>Motifs:</b> ${list.map(r => escape(methodLabel(r.method))).join(", ")}<br>` +
+    `<b>In RegulonDB</b> ${mark(isReg)}<br>` +
+    `<b>Records in database:</b> ${methodOrder.map(m => `${escape(methodLabel(m))} ${mark(methods.includes(m))}`).join(" · ")}`;
+
+  // The motif picture for one paper, from the best data available:
+  //  1. a numeric frequency matrix in data/motif_matrices.json (DAP-seq MEME motifs);
+  //  2. the paper's own logo images (Lally et al., published only as images);
+  //  3. the paper's aligned sites stored in dataset.csv (rows whose source is the
+  //     motif's supplement link, e.g. Fitzgerald Table 1).
+  const logoFor = r => {
+    const src = `${name} · ${methodLabel(r.method)} · ${r.paper}`;
+    const entry = matrices && matrices[name] && matrices[name][r.paper];
+    if (entry && entry.kind === "frequency") {
+      const freqs = Logo.fromMatrix(entry.matrix);
+      return logoBlock(freqs, `From the MEME matrix in ${escape(LINK_LABELS[r.paper] || "the supplement")}` +
+        (r.sites ? `, ${plural(Number(r.sites), "site")}.` : "."), `${src} · sequence logo`);
+    }
+    const published = r.logo_images ? publishedLogos(r, src) : "";
+    if (entry && entry.kind === "energy" && r.logo_images) {
+      // Two plots, as in the paper: the energy matrix and the frequency matrix derived from it.
+      // The frequency matrix is published only as an image, so the paper's image is shown.
+      const same = entry.published_logo === "same";
+      const pair = (energy, freq) => `<div class="plot-pair"><div><h3 class="plot-title">Energy matrix</h3>${energy}</div>` +
+        `<div><h3 class="plot-title">Frequency matrix</h3>${freq}</div></div>`;
+      const pfm = paperImage(r, src, "pfm");
+      if (same) {
+        const energy = energyLogoBlock(entry.matrix, entry.bias,
+          "From the authors' BoltzNet weight matrix (same as the published logo).", `${src} · energy matrix`);
+        return pair(energy, pfm) + `<p class="credit">${LALLY_CREDIT}</p>` +
+          `<details class="published"><summary>The paper's energy-matrix image (Supplementary Data 3)</summary>${paperImage(r, src, "weight_matrix")}</details>`;
+      }
+      return pair(paperImage(r, src, "weight_matrix"), pfm) + `<p class="credit">${LALLY_CREDIT}</p>` +
+        `<p class="flag">The weight matrix on the authors' BoltzNet site differs from the energy matrix the paper published for ${escape(name)} (above). ` +
+        `For 119 of the 124 TFs the two are identical. The five that differ (Nac, PdhR, NtrC/GlnG, AllR and UlaR) are the TFs the paper studies most closely ` +
+        `and the only ones with in vitro ChIP-seq experiments, so their published models were probably trained differently.</p>` +
+        `<div class="site-matrix"><h3 class="plot-title">Energy matrix on the authors' BoltzNet site</h3>` +
+        energyLogoBlock(entry.matrix, entry.bias, "From the authors' BoltzNet weight matrix; differs from the published one above.", `${src} · site energy matrix`) +
+        `</div>`;
+    }
+    if (r.logo_images) return published;
+    const seqs = rows.filter(x => x.dna_binding_sequence && x.source === r.supplement_url)
+      .map(x => x.dna_binding_sequence.toUpperCase());
+    if (!seqs.length || !seqs.every(q => q.length === seqs[0].length && /^[ACGT]+$/.test(q))) return "";
+    return logoBlock(frequencies(seqs), `From the ${plural(seqs.length, "aligned site")} stored here (${escape(LINK_LABELS[r.paper] || "the paper")}).`, `${src} · sequence logo`);
+  };
+  // One of Lally et al.'s published logo images (kind "weight_matrix" or "pfm"), enlargeable.
+  function paperImage(r, src, kind) {
+    const [wm, pfm] = r.logo_images.split(";");
+    const what = kind === "pfm" ? "frequency matrix" : "energy matrix";
+    const cap = kind === "pfm"
+      ? "As published (image only), in bits."
+      : "As published: above zero favors binding.";
+    const img = `<img src="${escape(new URL(kind === "pfm" ? pfm : wm, new URL("../", location.href)).href)}" alt="${what} logo for ${escape(name)}, as published">`;
+    return `<figure class="logo">${zoomButton(img, `${src} · ${what} (published)`, `${cap} ${LALLY_CREDIT}`)}<figcaption>${cap}</figcaption></figure>`;
+  }
+  // Lally et al.'s two published logo images, with the licence credit.
+  function publishedLogos(r, src) {
+      const [wm, pfm] = r.logo_images.split(";");
+      const credit = `Images: Lally et al. 2025, Supplementary Data 3, reproduced unmodified under ` +
+        `<a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a>.`;
+      const capWM = "Energy matrix: above zero favors binding.";
+      const capPFM = "Frequency matrix, in bits.";
+      const img = (file, what) => `<img src="${escape(new URL(file, new URL("../", location.href)).href)}" alt="${what} logo for ${escape(name)}, as published">`;
+      return `<div class="published-logos">` +
+        `<figure>${zoomButton(img(wm, "BoltzNet energy matrix"), `${src} · energy matrix`, `${capWM} ${credit}`)}<figcaption>${capWM}</figcaption></figure>` +
+        `<figure>${zoomButton(img(pfm, "Frequency matrix"), `${src} · frequency matrix`, `${capPFM} ${credit}`)}<figcaption>${capPFM}</figcaption></figure>` +
+        `<p class="credit">${credit}</p></div>`;
+  }
+  document.getElementById("sources").innerHTML = list.map(r => {
+    const facts = [["Motif", escape(r.motif_type)]];
+    if (r.width) facts.push(["Width", `${escape(r.width)} bp`]);
+    if (r.sites) facts.push(["Sites", fmt(Number(r.sites))]);
+    if (r.e_value) facts.push(["E-value", sci(r.e_value)]);
+    facts.push(["Published as", escape(r.published_as)]);
+    if (r.supplement_url) {
+      const file = r.supplement_file ? `<code>${escape(r.supplement_file)}</code> in ` : "";
+      facts.push(["Where to find it", `${file}<a href="${escape(r.supplement_url)}" target="_blank" rel="noopener">${escape(LINK_LABELS[r.paper] || "Supplement")}</a>`]);
+    }
+    if (r.matrix_url) facts.push(["Numeric matrix", `<a href="${escape(r.matrix_url)}" target="_blank" rel="noopener">${escape(r.matrix_url.split("/").pop())}</a> on the authors' BoltzNet site`]);
+    facts.push(["Paper", `<a href="${escape(r.source)}" target="_blank" rel="noopener">${escape(r.source.replace(/^https?:\/\//, ""))}</a>`]);
+    if (r.paper_gene && r.paper_gene.toLowerCase() !== name.toLowerCase()) facts.push(["Paper's name for it", `<i>${escape(r.paper_gene)}</i>`]);
+    const flag = r.method === "DAP" && !methods.includes("DAP")
+      ? `<p class="flag">This TF has no DAP-seq record in the database: the paper's Supplementary Table 2 does not mark it as successful, but Supplementary Data 2 still includes its motif.</p>`
+      : "";
+    return `<section class="card">` +
+      `<h2>${dot(r.method)}${escape(methodLabel(r.method))} · ${escape(r.paper)}</h2>` +
+      `<p class="note">${HOW[r.paper] || ""}</p>` +
+      `<table class="facts"><tbody>${facts.map(([k, v]) => `<tr><th scope="row">${k}</th><td>${v}</td></tr>`).join("")}</tbody></table>${logoFor(r)}${flag}</section>`;
+  }).join("");
+
+  MotifAgreement.load().then(result => renderAgreement(name, result)).catch(() => {});
+
+  // Binding-site sequences already stored for this TF (currently PhoB only).
+  const sites = rows.filter(r => r.dna_binding_sequence);
+  if (sites.length) {
+    const sources = [...new Set(sites.map(r => r.source).filter(Boolean))];
+    document.getElementById("sites-note").innerHTML =
+      `${plural(sites.length, "site")} stored in <code>data/dataset.csv</code>` +
+      (sources.length ? ` · from ${sources.map(s => `<a href="${escape(s)}" target="_blank" rel="noopener">${escape(s.replace(/^https?:\/\//, ""))}</a>`).join(", ")}` : "") + ".";
+    document.getElementById("sites").innerHTML =
+      `<thead><tr><th class="n">#</th><th>Site</th><th>Associated genes</th><th class="n">Peak center</th></tr></thead><tbody>` +
+      sites.map((r, i) => `<tr><td class="n">${i + 1}</td><td class="seq">${escape(r.dna_binding_sequence)}</td><td>${escape(r.associated_genes)}</td><td class="n">${r.peak_center && isFinite(Number(r.peak_center)) ? fmt(Number(r.peak_center)) : escape(r.peak_center)}</td></tr>`).join("") +
+      `</tbody>`;
+    document.getElementById("sites-card").hidden = false;
+  }
+}
+
+// ---- Enlarged view ---------------------------------------------------------------
+const zoom = document.getElementById("zoom");
+let zoomTrigger = null;
+// How well this TF's two motifs agree: the correlation between them and the scatter it
+// is the correlation of (see assets/motif-agreement.js and the Coverage page).
+function renderAgreement(name, result) {
+  const t = result.tfs.find(x => x.name === name);
+  if (!t) return;
+  const rank = result.tfs.indexOf(t) + 1;
+  document.getElementById("agree-card").hidden = false;
+  document.getElementById("agree-num").textContent = t.r.toFixed(2);
+  document.getElementById("agree-sub").textContent = `${t.r > 0.5 ? "Above" : "Below"} 0.5 · rank ${rank} of ${result.tfs.length} TFs with two motifs.`;
+  document.getElementById("agree-note").innerHTML =
+    `DAP-seq motif vs the ${escape(t.other)}, aligned with Tomtom over ${t.overlap} positions${t.reversed ? " (one reverse-complemented)" : ""}, p = ${t.tomtom_p < 0.001 ? t.tomtom_p.toExponential(1) : t.tomtom_p.toFixed(3)}. Score: Pearson correlation of the aligned probability matrices. ` +
+    `<a href="coverage.html#agreement">All TFs on the Coverage page →</a>`;
+
+  const COLORS = { A: "#1f9e5a", C: "#2b6cb0", G: "#e09b12", T: "#d23b3b" };
+  const W = 460, H = 340, left = 50, right = 14, top = 12, bottom = 42;
+  const px = v => left + v * (W - left - right), py = v => H - bottom - v * (H - top - bottom);
+  const parts = [];
+  for (let i = 0; i <= 4; i++) {
+    const v = i / 4, c = i ? "#ecebe6" : "#c3c2b7";
+    parts.push(`<line x1="${px(v)}" x2="${px(v)}" y1="${top}" y2="${H - bottom}" stroke="${c}"/><line x1="${left}" x2="${W - right}" y1="${py(v)}" y2="${py(v)}" stroke="${c}"/>`);
+    parts.push(`<text x="${px(v)}" y="${H - bottom + 15}" text-anchor="middle" font-size="11" fill="#666">${v}</text>`);
+    parts.push(`<text x="${left - 8}" y="${py(v)}" text-anchor="end" dominant-baseline="central" font-size="11" fill="#666">${v}</text>`);
+  }
+  parts.push(`<text x="${left + (W - left - right) / 2}" y="${H - 6}" text-anchor="middle" font-size="11" fill="#666">DAP-seq motif: probability of the base</text>`);
+  parts.push(`<text transform="translate(13 ${top + (H - top - bottom) / 2}) rotate(-90)" text-anchor="middle" font-size="11" fill="#666">${t.other.startsWith("ChIP-seq energy") ? "ChIP-seq motif: probability of the base" : "ChIP-seq sites: probability of the base"}</text>`);
+  // Least-squares line across the plot; the SVG clips whatever leaves the frame.
+  const line = MotifAgreement.fit(t.points);
+  parts.push(`<clipPath id="agree-clip"><rect x="${left}" y="${top}" width="${W - left - right}" height="${H - top - bottom}"/></clipPath>`);
+  parts.push(`<line clip-path="url(#agree-clip)" x1="${px(0)}" y1="${py(line.intercept)}" x2="${px(1)}" y2="${py(line.intercept + line.slope)}" stroke="#222" stroke-width="1.5"/>`);
+  parts.push(t.points.map(q => `<circle cx="${px(q.x).toFixed(1)}" cy="${py(q.y).toFixed(1)}" r="4.2" fill="${COLORS[q.base]}" fill-opacity="0.8" stroke="#fff" stroke-width="1"><title>${q.base} at DAP-seq position ${q.pos}: probability ${q.x.toFixed(2)}, other motif ${q.y.toFixed(2)}</title></circle>`).join(""));
+  document.getElementById("agree-plot").innerHTML =
+    `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Scatterplot of the two motifs for ${escape(name)}, correlation ${t.r.toFixed(2)}">${parts.join("")}</svg>`;
+  document.getElementById("agree-cap").innerHTML =
+    Object.entries(COLORS).map(([b, c]) => `<span class="agree-key"><i style="background:${c}"></i>${b}</span>`).join("") +
+    `<br>Each dot: one base at one aligned position. Line: least-squares fit.`;
+}
+
+function openZoom(button) {
+  const media = button.querySelector(":scope > svg, :scope > img").cloneNode(true);
+  media.removeAttribute("style");       // drop the inline max-width so it fills the dialog
+  media.removeAttribute("loading");
+  document.getElementById("zoom-body").replaceChildren(media);
+  document.getElementById("zoom-title").textContent = button.dataset.title || "";
+  document.getElementById("zoom-cap").innerHTML = button.dataset.caption || "";
+  zoomTrigger = button;
+  zoom.showModal();
+}
+document.addEventListener("click", e => {
+  const button = e.target.closest(".zoom");
+  if (button) openZoom(button);
+});
+zoom.querySelector(".zoom-close").addEventListener("click", () => zoom.close());
+zoom.addEventListener("click", e => { if (e.target === zoom) zoom.close(); });   // click on the backdrop
+zoom.addEventListener("close", () => { if (zoomTrigger) zoomTrigger.focus(); });
+
+const get = url => fetch(url, { cache: "no-store" }).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); });
+// The matrices are optional: without them the page still lists every motif source.
+const matricesLoaded = get("../data/motif_matrices.json").then(JSON.parse).catch(() => null);
+Promise.all([get("../data/motifs.csv"), get("../data/dataset.csv"), matricesLoaded])
+  .then(([m, d, x]) => render(records(m), records(d), x))
+  .catch(() => {
+    document.getElementById("tf-name").textContent = "TF Motifs";
+    document.getElementById("error").hidden = false;
+  });
+  </script>
+  <script>window.WATCH_FILES = ["motif.html", "../assets/nav.css","../assets/logo.js", "../assets/motif-agreement.js", "../data/motifs.csv", "../data/dataset.csv", "../data/motif_matrices.json", "../data/motif_agreement.json"];</script>
+  <script src="../assets/nav.js"></script>
+  <script src="../assets/dev-reload.js"></script>
+</body>
+</html>

@@ -2,24 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>E. coli TF Database</title>
-  <link rel="stylesheet" href="assets/style.css">
+  <title>Escherichia coli Transcription Factor Database</title>
+  <!-- The pages live in html/. A web server opens this file for the site's address, so it
+       forwards there, keeping any ?query and #anchor. -->
+  <script>location.replace("html/" + location.search + location.hash);</script>
+  <meta http-equiv="refresh" content="0; url=html/">
 </head>
 <body>
-  <main>
-    <p class="nav"><a href="./">Database</a> · <a href="thoughts.html">Thoughts</a></p>
-    <h1><em>E. coli</em> TF Database</h1>
-    <input id="search" type="search" placeholder="Search…" aria-label="Search">
-    <span id="count"></span>
-    <div class="table-wrap">
-      <table id="table">
-        <thead></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-    <p id="empty" hidden>No entries yet.</p>
-  </main>
-  <script src="assets/app.js"></script>
+  <p><a href="html/">Open the Transcription Factor Database</a></p>
 </body>
 </html>

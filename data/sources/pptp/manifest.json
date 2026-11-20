@@ -1,0 +1,38 @@
+{
+  "paper": "https://doi.org/10.1038/s41467-023-41572-4",
+  "geo": "GSE213624",
+  "repository_commit": "b8a5f5d7e694de8938bf51a2d905a34326504316",
+  "retrieved": "2026-11-03",
+  "selection": "class in {-1, 1}; std < 0.7; omit promoter-targeting sgRNA pairs",
+  "files": [
+    {
+      "file": "PPTP-seq_Glu.csv",
+      "url": "https://raw.githubusercontent.com/yhan0410/PPTP-seq_ECOLI/b8a5f5d7e694de8938bf51a2d905a34326504316/Processed_data/PPTP-seq_Glu.csv",
+      "sha256": "e351472171aa43f8b75a3447f99c0d186929960665a6f085eb2c5fdaba60bcde",
+      "input_rows": 240721,
+      "selected_rows": 4058,
+      "up": 3720,
+      "down": 338
+    },
+    {
+      "file": "PPTP-seq_LB.csv",
+      "url": "https://raw.githubusercontent.com/yhan0410/PPTP-seq_ECOLI/b8a5f5d7e694de8938bf51a2d905a34326504316/Processed_data/PPTP-seq_LB.csv",
+      "sha256": "2a19218dfe04e101e8c8a5b6a65b455d37932efd27718f1570de40d0f62c1439",
+      "input_rows": 240033,
+      "selected_rows": 5279,
+      "up": 4931,
+      "down": 348
+    },
+    {
+      "file": "PPTP-seq_Gly.csv",
+      "url": "https://raw.githubusercontent.com/yhan0410/PPTP-seq_ECOLI/b8a5f5d7e694de8938bf51a2d905a34326504316/Processed_data/PPTP-seq_Gly.csv",
+      "sha256": "b2da3296b8ea6836b29e9ca4e9b09d49c0b1d80fbc605d98a23c73aa64927c5b",
+      "input_rows": 240215,
+      "selected_rows": 3810,
+      "up": 3307,
+      "down": 503
+    }
+  ],
+  "selected_sha256": "06170a4b5bbb82ecf8b14b4eda4fef03dc4cc5549c6f6b395d3448aeb75cc357",
+  "exclusions_sha256": "1ed4b6242ff0d8234e842e86a0959af797bd669fa8fe80a38ef55a0fd2302891"
+}

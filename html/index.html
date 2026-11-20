@@ -1,0 +1,908 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Escherichia coli Transcription Factor Database</title>
+  <style>
+:root {
+  color-scheme: light;
+  --ink: #222222;
+  --muted: #666666;
+  --line: #e5e5e5;
+  --accent: #333333;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #ffffff;
+  color: var(--ink);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+main { max-width: 1480px; margin: 0 auto; padding: 28px 40px 48px; }
+a { color: var(--accent); text-underline-offset: 3px; }
+button, input, select { font: inherit; }
+button, select, summary { cursor: pointer; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid #555555; outline-offset: 3px; }
+h1 { font-size: 1.6rem; line-height: 1.2; letter-spacing: -0.02em; font-weight: 650; margin: 0 0 6px; }
+.intro { margin: 0; color: var(--muted); }
+.download { flex-shrink: 0; font-size: 0.85rem; }
+.database { margin-top: 8px; }
+.toolbar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 20px; padding: 0 0 16px; }
+.results-for { margin: 0 8px 0 0; padding-bottom: 5px; font-size: 1.3rem; line-height: 1.25; font-weight: 650; letter-spacing: -0.015em; }
+.results-for .and { margin: 0 3px; color: var(--muted); font-size: 0.85rem; font-weight: 650; letter-spacing: 0.04em; }
+.search-field { flex: 1; max-width: 480px; min-width: 220px; }
+.search-field label, .method-field label { display: block; margin-bottom: 7px; font-size: 0.75rem; font-weight: 600; }
+#search, #method-filter, #medium-filter, #strain-filter { height: 40px; padding: 8px 12px; border: 1px solid #d4d4d4; border-radius: 6px; background: #fff; color: var(--ink); }
+#search { width: 100%; }
+#search::placeholder { color: #767676; }
+#method-filter { width: 180px; }
+#strain-filter { width: 260px; }
+.regulon-only { display: flex; align-items: center; gap: 8px; min-height: 40px; font-size: 0.85rem; white-space: nowrap; cursor: pointer; }
+.column-heading button.sort {
+  display: inline-flex; align-items: center; gap: 5px; max-width: 100%;
+  padding: 0; border: 0; background: none; color: inherit; font: inherit;
+  font-weight: inherit; text-align: left; overflow: hidden; text-overflow: ellipsis;
+}
+.column-heading button.sort:hover { text-decoration: underline; text-underline-offset: 3px; }
+.column-heading button.sort .sort-arrow { flex: none; color: var(--muted); font-size: 0.85em; }
+.column-heading button.sort.sorted { color: var(--accent); }
+.column-heading button.sort.sorted .sort-arrow { color: var(--accent); }
+input[type="checkbox"] { width: 16px; height: 16px; margin: 0; accent-color: var(--accent); }
+.text-button { min-height: 40px; padding: 8px 0; border: 0; background: none; color: var(--accent); font-size: 0.8rem; text-decoration: underline; text-underline-offset: 3px; }
+
+.tf-picker { margin-bottom: 40px; }
+.tf-picker-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 16px; margin-bottom: 12px; }
+.tf-picker-head .tf-regulon { margin-left: auto; }
+.tf-filter { height: 34px; min-width: 170px; padding: 6px 10px; border: 1px solid #d4d4d4; border-radius: 6px; background: #fff; color: var(--ink); font-size: 0.8rem; }
+/* No inner scroll: every TF is visible at once on the landing view. */
+.tf-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.tf-chips button {
+  padding: 3px 10px; border: 1px solid var(--line); border-radius: 999px;
+  background: #fafafa; color: var(--ink); font-size: 0.75rem; line-height: 1.5;
+}
+.tf-chips button:hover { border-color: #b8b8b8; background: #fff; }
+.tf-chips button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 650; }
+.tf-chips .via { margin-left: 5px; color: var(--muted); font-size: 0.7rem; font-style: italic; }   /* the gene a TF was matched by */
+.tf-chips .no-match { color: var(--muted); font-size: 0.78rem; padding: 4px 2px; }
+.tf-dash { margin-bottom: 32px; padding: 24px 28px; border: 2px solid #9a9a9a; border-radius: 10px; }
+@media (max-width: 540px) { .tf-dash { padding: 18px 16px; } }
+.dash-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin-bottom: 4px; }
+.dash-head h2 { margin: 0; font-size: 2rem; line-height: 1.15; font-weight: 700; letter-spacing: -0.025em; }
+.dash-status { margin: 0; color: var(--muted); font-size: 0.85rem; }
+.dash-facts { display: flex; flex-wrap: wrap; gap: 4px 28px; margin: 0; font-size: 0.82rem; }
+.dash-facts div { display: flex; gap: 6px; }
+.dash-facts dt { color: var(--muted); }
+.dash-facts dd { margin: 0; }
+.tf-dash h3 { margin: 26px 0 10px; font-size: 0.85rem; font-weight: 650; }.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.dash-methods { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 4px 12px; margin: 0 -12px; padding: 0; list-style: none; }
+.method-tile { display: block; width: 100%; height: 100%; padding: 8px 12px; border: 0; border-radius: 6px; background: none; color: var(--ink); text-align: left; }
+button.method-tile:hover { background: #f6f6f6; }
+button.method-tile[aria-pressed="true"] { background: #eeeeee; }
+.method-tile.uncovered { color: #999999; }
+.method-tile.uncovered .dot { opacity: 0.3; }
+.tile-name { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 600; }
+.tile-value { display: block; margin-top: 4px; font-size: 1rem; font-weight: 650; font-variant-numeric: tabular-nums; }
+.method-tile.uncovered .tile-value { font-weight: 400; }
+.tile-detail { display: block; margin-top: 2px; color: var(--muted); font-size: 0.75rem; }
+.dash-motifs { display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; }   /* one card per row */
+.motif-card { min-width: 0; }
+.motif-card + .motif-card { padding-top: 22px; border-top: 1px solid #555555; }
+.motif-card h4 { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 0.85rem; font-weight: 650; }
+.motif-facts { margin: 2px 0 10px; color: var(--muted); font-size: 0.75rem; }
+.motif-plots { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 4px 16px; align-items: start; }
+.motif-card figure { margin: 10px 0 0; }
+.motif-card figure svg, .motif-card figure img { display: block; width: 100%; height: auto; }
+.motif-card figure img { max-width: 440px; }
+.motif-card figcaption { margin-top: 4px; color: var(--muted); font-size: 0.72rem; }
+.motif-credit { margin: 8px 0 0; color: var(--muted); font-size: 0.7rem; }
+.dash-none { margin: 14px 0 0; color: var(--muted); font-size: 0.8rem; }
+.dash-none:first-child { margin-top: 0; }
+.dash-more { margin: 12px 0 0; font-size: 0.82rem; }
+.table-meta { display: flex; justify-content: space-between; gap: 16px; padding: 0 0 10px; color: var(--muted); font-size: 0.75rem; }
+#count { font-variant-numeric: tabular-nums; }
+.table-hint { color: var(--muted); }
+.method-note { margin: 0; padding: 0 0 16px; color: var(--muted); font-size: 0.8rem; }
+.pagination { display: flex; align-items: center; justify-content: center; gap: 16px; padding: 16px 0 0; font-size: 0.8rem; }
+.pagination button { padding: 6px 12px; background: #fff; border: 1px solid #d4d4d4; border-radius: 6px; }
+.pagination button:disabled { cursor: default; opacity: 0.45; }
+.table-wrap { overflow: auto; max-height: 68vh; min-height: 180px; border-top: 1px solid var(--line); }
+table { width: 100%; table-layout: fixed; border-collapse: separate; border-spacing: 0; font-size: 0.8rem; }
+th, td { padding: 11px 14px; text-align: left; border-bottom: 1px solid #eeeeee; vertical-align: top; overflow-wrap: anywhere; }
+th { position: sticky; top: 0; z-index: 2; background: #fff; border-bottom-color: #cccccc; color: var(--muted); font-size: 0.72rem; font-weight: 600; white-space: nowrap; }
+th .column-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+tbody tr { --row-bg: #fff; }
+tbody tr:hover { --row-bg: #f6f6f6; }
+td { background: var(--row-bg); }
+th:first-child, td:first-child { position: sticky; left: 0; z-index: 1; width: 72px; color: var(--muted); font-variant-numeric: tabular-nums; }
+th:nth-child(2), td:nth-child(2) { position: sticky; left: 72px; z-index: 1; }
+th:first-child, th:nth-child(2) { z-index: 3; }
+td.tf-name { color: #222222; font-weight: 650; }
+.compress { flex: 0 0 22px; width: 22px; height: 22px; padding: 0; border: 1px solid transparent; border-radius: 4px; background: transparent; color: #666666; line-height: 1; font-size: 1rem; }
+.compress:hover { background: #fff; border-color: #d4d4d4; color: var(--accent); }
+th.compressed, td.compressed { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+th.compressed { padding-left: 10px; padding-right: 10px; }
+.badge { color: var(--muted); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.02em; }
+.positive { color: var(--accent); }
+.missing { color: #767676; }
+.seq { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.73rem; }
+.sequence summary { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; list-style: none; }
+.sequence summary::-webkit-details-marker { display: none; }
+.sequence-preview { display: block; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #555555; }
+.sequence-action { color: var(--accent); font: 0.68rem/1.5 system-ui, sans-serif; text-decoration: underline; text-underline-offset: 2px; }
+.sequence-length { color: var(--muted); font: 0.65rem/1.5 system-ui, sans-serif; }
+.sequence .hide-label, .sequence[open] .show-label { display: none; }
+.sequence[open] .hide-label { display: inline; }
+.sequence[open] .sequence-preview { display: none; }
+.sequence-full { display: block; margin-top: 10px; overflow-wrap: anywhere; user-select: all; line-height: 1.7; }
+.empty-state { padding: 48px 24px; text-align: center; }
+.empty-state h2 { margin: 0 0 8px; font-size: 1rem; font-weight: 600; }
+.empty-state p { margin: 0; color: var(--muted); font-size: 0.85rem; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+.notebook { max-width: 800px; }
+.notebook h2 { font-size: 1rem; color: var(--muted); font-weight: 600; border-top: 1px solid var(--line); padding-top: 16px; margin: 28px 0 12px; }
+@media (max-width: 900px) {
+  main { padding: 24px; }
+  .toolbar { flex-wrap: wrap; gap: 16px; }
+  .search-field { max-width: none; flex-basis: 100%; }
+  .table-meta { flex-wrap: wrap; gap: 4px; }
+}
+@media (max-width: 540px) {
+  main { padding: 20px 14px 32px; }
+  .intro { font-size: 0.85rem; }
+  .toolbar { gap: 14px; }
+  .search-field { min-width: 0; }
+  .method-field { width: 100%; }
+  #method-filter, #medium-filter, #strain-filter { width: 100%; }
+  .table-hint { font-size: 0.68rem; }
+  .table-wrap { max-height: 65vh; }
+}
+  </style>
+  <link rel="stylesheet" href="../assets/nav.css">
+</head>
+<body>
+  <header class="site-bar">
+    <div class="site-bar-inner">
+      <h1 class="site-title"><a href="./">Transcription Factor Database <em>Escherichia coli (E. coli)</em></a></h1>
+      <nav class="site-tabs" aria-label="Main navigation">
+        <a href="./" aria-current="page">Database</a>
+        <a href="coverage.html">Coverage</a>
+        <a href="notes.html">Notes</a>
+      </nav>
+      <a class="site-download" href="../data/dataset.csv" download>Download CSV<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8M4.5 6.8 8 10.3l3.5-3.5M2.5 13.5h11"/></svg></a>
+    </div>
+  </header>
+  <main>
+    <section class="tf-picker" aria-labelledby="tf-picker-title" id="tf-picker" hidden>
+      <div class="tf-picker-head">
+        <h2 id="tf-picker-title" class="sr-only">Browse by TF</h2>
+        <label class="sr-only" for="tf-filter">Find a transcription factor by its name, its gene or a gene it is associated with</label>
+        <input id="tf-filter" class="tf-filter" type="search" placeholder="Find a TF or gene…" autocomplete="off">
+        <label class="regulon-only tf-regulon"><input type="checkbox" id="tf-regulon"> In RegulonDB only</label>
+      </div>
+      <ul class="tf-chips" id="tf-chips"></ul>
+    </section>
+    <section class="tf-dash" id="tf-dash" aria-labelledby="dash-name" hidden>
+      <div class="dash-head">
+        <h2 id="dash-name"></h2>
+        <p class="dash-status" id="dash-status"></p>
+      </div>
+      <dl class="dash-facts" id="dash-facts"></dl>
+      <h3 id="dash-methods-title">Covered by</h3>
+      <ul class="dash-methods" id="dash-methods" aria-labelledby="dash-methods-title"></ul>
+      <h3>Motifs by method</h3>
+      <div id="dash-motifs"></div>
+    </section>
+    <section class="database" id="database" aria-label="Transcription factors" hidden>
+      <div class="toolbar">
+        <p class="results-for" id="results-for" aria-live="polite" hidden></p>
+        <div class="method-field" hidden>   <!-- no dropdown: the dashboard's method tiles filter by method -->
+          <label for="method-filter">Experimental method</label>
+          <select id="method-filter" disabled><option value="">All methods</option></select>
+        </div>
+        <div class="method-field">
+          <label for="medium-filter">Growth medium</label>
+          <select id="medium-filter" disabled><option value="">All media</option></select>
+        </div>
+        <div class="method-field">
+          <label for="strain-filter">Strain</label>
+          <select id="strain-filter" disabled><option value="">All strains</option></select>
+        </div>
+        <button type="button" id="reset-filters" class="text-button" hidden>Clear filters</button>
+      </div>
+      <p class="method-note" id="pptp-note" hidden>PPTP records show significant promoter responses to gene knockdown. A response alone does not establish direct DNA binding. <a href="notes.html#pptp-seq">Method details</a></p>
+      <div class="table-meta">
+        <span id="count" role="status" aria-live="polite">Loading entries…</span>
+        <span class="table-hint" id="table-hint">Expand sequences to view in full · Scroll for more columns</span>
+      </div>
+      <div class="table-wrap" role="region" aria-label="Transcription factor data" aria-describedby="table-hint" tabindex="0" aria-busy="true">
+        <table id="table">
+          <caption class="sr-only">E. coli transcription factors and their experimental data</caption>
+          <colgroup></colgroup>
+          <thead></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <nav class="pagination" id="pagination" aria-label="Table pages" hidden>
+        <button type="button" id="previous-page">Previous</button>
+        <span id="page-status" role="status" aria-live="polite"></span>
+        <button type="button" id="next-page">Next</button>
+      </nav>
+      <div id="empty" class="empty-state" hidden>
+        <h2 id="empty-title">No matching entries</h2>
+        <p id="empty-description">Try a different filter.</p>
+      </div>
+    </section>
+  </main>
+  <script src="../assets/logo.js"></script>
+  <script>
+// Loads data/dataset.csv and renders a searchable table.
+const DATA_URL = "../data/dataset.csv";
+const MAX_ROWS = 500;
+const METHODS = ["SELEX", "PPTP", "DAP", "CHIP"];
+const COLUMNS = {
+  index: { label: "#", width: 72 },
+  record_id: { label: "Record ID", width: 130 },
+  tf_name: { label: "TF name", width: 140 },
+  effector: { label: "Effector", width: 190 },
+  tf_binding_domain: { label: "TF binding domain", width: 260 },
+  sequence_strain: { label: "Sequence strain", width: 160 },
+  dna_binding_sequence: { label: "DNA binding sequence", width: 260 },
+  method: { label: "Method", width: 110 },
+  strain: { label: "Strain", width: 150 },
+  characterized: { label: "Characterized", width: 145 },
+  regulondb: { label: "RegulonDB", width: 130 },
+  associated_genes: { label: "Associated genes", width: 180 },
+  peak_center: { label: "Peak center (bp)", width: 150 },
+  chip_score: { label: "ChIP score", width: 130 },
+  source: { label: "Source", width: 130 },
+  perturbed_gene: { label: "Knockdown gene", width: 160 },
+  growth_medium: { label: "Growth medium", width: 190 },
+  response: { label: "Promoter response", width: 200 },
+  log2_fold_change: { label: "log₂ fold change vs control", width: 220 },
+  log2_fold_change_vs_median: { label: "log₂ fold change vs median", width: 220 },
+  neg_log10_q_value: { label: "−log₁₀(q) score", width: 170 },
+  replicates: { label: "Replicates", width: 125 }
+};
+
+function parseCSV(text) {
+  const rows = [];
+  let row = [], field = "", quoted = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (quoted) {
+      if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
+      else if (c === '"') quoted = false;
+      else field += c;
+    } else if (c === '"') quoted = true;
+    else if (c === ",") { row.push(field); field = ""; }
+    else if (c === "\n" || c === "\r") {
+      if (c === "\r" && text[i + 1] === "\n") i++;
+      row.push(field); rows.push(row); row = []; field = "";
+    } else field += c;
+  }
+  if (field || row.length) { row.push(field); rows.push(row); }
+  return rows.filter(r => r.some(v => v !== ""));
+}
+
+const table = document.getElementById("table");
+const count = document.getElementById("count");
+const empty = document.getElementById("empty");
+const tableWrap = document.querySelector(".table-wrap");
+const methodSelect = document.getElementById("method-filter");
+const mediumSelect = document.getElementById("medium-filter");
+const strainSelect = document.getElementById("strain-filter");
+const resetFilters = document.getElementById("reset-filters");
+const pagination = document.getElementById("pagination");
+const previousPage = document.getElementById("previous-page");
+const nextPage = document.getElementById("next-page");
+
+let header = [], rows = [], methodCol = -1, methodFilter = "";   // methodFilter: selected methods joined by commas
+const selectedMethods = () => new Set(methodFilter ? methodFilter.split(",") : []);
+let regulonCol = -1;
+let mediumCol = -1, mediumFilter = "", strainCol = -1, strainFilter = "", page = 0;
+let tfCol = -1, tfFilter = "", tfNames = [];
+let sortCol = -1, sortDir = 1;   // column index and 1 = ascending, -1 = descending
+const tfPicker = document.getElementById("tf-picker");
+const tfChips = document.getElementById("tf-chips");
+const tfFilterInput = document.getElementById("tf-filter");
+const tfRegulonBox = document.getElementById("tf-regulon");
+const database = document.getElementById("database");
+let tfRegulonNames = new Set();
+
+// Compressed columns are remembered per browser, by column name.
+const VIEW_KEY = "column-view";
+const columnView = loadView();
+
+function loadView() {
+  try {
+    const v = JSON.parse(localStorage.getItem(VIEW_KEY)) || {};
+    return { compressed: new Set(Array.isArray(v.compressed) ? v.compressed : []) };
+  } catch { return { compressed: new Set() }; }
+}
+
+function saveView() {
+  try {
+    localStorage.setItem(VIEW_KEY, JSON.stringify({ compressed: [...columnView.compressed] }));
+  } catch {}
+}
+
+function headerCell(h, i) {
+  const label = COLUMNS[h]?.label || h.replaceAll("_", " ");
+  const compressed = columnView.compressed.has(h);
+  if (h === "index") return `<th scope="col" title="Row position in the filtered results">#</th>`;
+  const action = `${compressed ? "Expand" : "Compress"} ${label} column`;
+  const toggle = `<button type="button" class="compress" data-col="${escape(h)}" title="${escape(action)}" aria-label="${escape(action)}" aria-expanded="${!compressed}">${compressed ? "+" : "−"}</button>`;
+  const active = sortCol === i;
+  const ariaSort = active ? (sortDir === 1 ? "ascending" : "descending") : "none";
+  const arrow = active ? (sortDir === 1 ? "↑" : "↓") : "↕";
+  const sortLabel = `Sort by ${label} ${active && sortDir === 1 ? "descending" : "ascending"}`;
+  const sorter = `<button type="button" class="sort${active ? " sorted" : ""}" data-sort="${i}" title="${escape(sortLabel)}" aria-label="${escape(sortLabel)}">${escape(label)}<span class="sort-arrow" aria-hidden="true">${arrow}</span></button>`;
+  return `<th scope="col" data-i="${i}" aria-sort="${ariaSort}"${compressed ? ' class="compressed"' : ""}><span class="column-heading">${compressed ? `<span class="sr-only">${escape(label)}</span>` : sorter}${toggle}</span></th>`;
+}
+
+// Columns whose values are numbers, so they sort numerically rather than as text.
+const NUMERIC_COLUMNS = new Set(["index", "record_id", "peak_center", "chip_score",
+  "log2_fold_change", "log2_fold_change_vs_median", "neg_log10_q_value", "replicates"]);
+
+function sortRows(list) {
+  if (sortCol < 0) return list;
+  const h = header[sortCol];
+  const numeric = NUMERIC_COLUMNS.has(h);
+  const key = r => (r[sortCol] || "");
+  return [...list].sort((a, b) => {
+    const x = key(a), y = key(b);
+    // Blanks always sort last, whichever direction is active.
+    if (!x && !y) return 0;
+    if (!x) return 1;
+    if (!y) return -1;
+    const cmp = numeric
+      ? (parseFloat(x) || 0) - (parseFloat(y) || 0)
+      : x.localeCompare(y, "en", { sensitivity: "base", numeric: true });
+    return cmp * sortDir;
+  });
+}
+
+function bodyCell(v, i) {
+  const h = header[i];
+  if (!v) return '<td><span class="missing" aria-label="Not available">—</span></td>';
+  if (h !== "index" && columnView.compressed.has(h)) return `<td class="compressed" title="${escape(v)}">${escape(v)}</td>`;
+  if (h.endsWith("_sequence") || h.endsWith("_domain")) {
+    return `<td class="seq"><details class="sequence"><summary><span class="sequence-preview" aria-hidden="true">${escape(v.slice(0, 24))}${v.length > 24 ? "…" : ""}</span><span class="sequence-action"><span class="show-label">View sequence</span><span class="hide-label">Hide sequence</span></span><span class="sequence-length">${v.replace(/\s/g, "").length} characters</span></summary><code class="sequence-full">${escape(v)}</code></details></td>`;
+  }
+  if (h === "method") return `<td><span class="badge">${escape(v)}</span></td>`;
+  if (h === "source" && v.startsWith("https://")) return `<td><a href="${escape(v)}" target="_blank" rel="noopener noreferrer">Paper ↗</a></td>`;
+  if (h === "tf_name") return `<td class="tf-name">${escape(v)}</td>`;
+  if (h === "regulondb" && v === "✓") return '<td class="positive"><span aria-hidden="true">✓</span> <span>Included</span></td>';
+  if (h === "characterized" && v.toLowerCase() === "yes") return '<td class="positive">Yes</td>';
+  return `<td>${escape(v)}</td>`;
+}
+
+// The medium and strain dropdowns offer only values that still have records under
+// every other active filter (selected TF, method tiles, and each other), so no
+// offered combination is empty. A selection the other filters rule out is dropped.
+function strainsFor(tf) {
+  if (strainCol < 0) return [];
+  const pool = tf ? rows.filter(r => r[tfCol] === tf) : rows;
+  return [...new Set(pool.map(r => r[strainCol]).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+}
+function updateFilterOptions() {
+  const methodsOn = selectedMethods();
+  const pool = rows.filter(r => (!tfFilter || r[tfCol] === tfFilter) && (!methodFilter || methodsOn.has(r[methodCol])));
+  const values = (col, rs) => col < 0 ? [] : [...new Set(rs.map(r => r[col]).filter(Boolean))];
+  const strainsGiven = () => values(strainCol, pool.filter(r => !mediumFilter || r[mediumCol] === mediumFilter)).sort((a, b) => a.localeCompare(b));
+  let strains = strainsGiven();
+  if (strainFilter && !strains.includes(strainFilter)) strainFilter = "";
+  const media = values(mediumCol, pool.filter(r => !strainFilter || r[strainCol] === strainFilter));
+  if (mediumFilter && !media.includes(mediumFilter)) { mediumFilter = ""; strains = strainsGiven(); }
+  const fill = (select, all, list, value) => {
+    select.innerHTML = `<option value="">${all}</option>` + list.map(m => `<option value="${escape(m)}">${escape(m)}</option>`).join("");
+    select.value = value;
+    select.disabled = !list.length;
+  };
+  fill(mediumSelect, "All media", media, mediumFilter);
+  fill(strainSelect, "All strains", strains, strainFilter);
+}
+
+function render() {
+  updateFilterOptions();
+  const methodsOn = selectedMethods();
+  const shown = sortRows(rows.filter(r =>
+    (!tfFilter || r[tfCol] === tfFilter) &&
+    (!methodFilter || methodsOn.has(r[methodCol])) &&
+    (!mediumFilter || r[mediumCol] === mediumFilter) &&
+    (!strainFilter || r[strainCol] === strainFilter)));
+  // "Results for X AND Y" names the selected method tiles; with none selected it is all methods.
+  const resultsFor = document.getElementById("results-for");
+  resultsFor.hidden = false;
+  resultsFor.innerHTML = "Results for " + (methodsOn.size
+    ? Object.keys(METHOD_NAMES).filter(m => methodsOn.has(m)).map(m => escape(methodLabel(m))).join(' <span class="and">AND</span> ')
+    : "all methods");
+  const widths = header.map(h => h !== "index" && columnView.compressed.has(h) ? 44 : (COLUMNS[h]?.width || 160));
+  table.style.minWidth = `${widths.reduce((sum, width) => sum + width, 0)}px`;
+  table.querySelector("colgroup").innerHTML = widths.map(width => `<col style="width:${width}px">`).join("");
+  table.tHead.innerHTML = "<tr>" + header.map(headerCell).join("") + "</tr>";
+  const pages = Math.max(1, Math.ceil(shown.length / MAX_ROWS));
+  page = Math.min(page, pages - 1);
+  const start = page * MAX_ROWS;
+  const body = shown.slice(start, start + MAX_ROWS).map((r, rowIndex) =>
+    "<tr>" + header.map((h, i) => bodyCell(h === "index" ? String(start + rowIndex + 1) : (r[i] || ""), i)).join("") + "</tr>");
+  table.tBodies[0].innerHTML = body.join("");
+  const totalTFs = new Set(rows.map(r => r[tfCol]).filter(Boolean)).size;
+  const shownTFs = new Set(shown.map(r => r[tfCol]).filter(Boolean)).size;
+  count.textContent = (shown.length === rows.length
+    ? `${totalTFs} TFs · ${rows.length} records`
+    : `${shownTFs} of ${totalTFs} TFs · ${shown.length} of ${rows.length} records`)
+    + (shown.length > MAX_ROWS ? ` (rows ${start + 1}–${Math.min(start + MAX_ROWS, shown.length)})` : "");
+  pagination.hidden = pages <= 1;
+  previousPage.disabled = page === 0;
+  nextPage.disabled = page === pages - 1;
+  document.getElementById("page-status").textContent = `Page ${page + 1} of ${pages}`;
+  document.getElementById("pptp-note").hidden = !methodsOn.has("PPTP") && !mediumFilter;
+  for (const tile of dashMethods.querySelectorAll("button[data-method]")) {
+    tile.setAttribute("aria-pressed", String(methodsOn.has(tile.dataset.method)));
+  }
+  syncURL();
+  const filtered = Boolean(methodFilter || mediumFilter || strainFilter || tfFilter);
+  resetFilters.hidden = !filtered;
+  empty.hidden = shown.length > 0;
+  tableWrap.hidden = shown.length === 0;
+  document.getElementById("table-hint").hidden = shown.length === 0;
+  document.getElementById("empty-title").textContent = rows.length ? "No matching entries" : "No entries yet";
+  document.getElementById("empty-description").textContent = rows.length ? "Try a different filter." : "Entries will appear here when the dataset is available.";
+}
+
+function escape(s) {
+  return s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+
+// ---- Browse-by-TF chips -----------------------------------------------------
+
+function renderTFChips() {
+  const needle = tfFilterInput.value.trim().toLowerCase();
+  let list = tfNames;
+  if (tfRegulonBox.checked) list = list.filter(n => tfRegulonNames.has(n));
+  // A search matches a TF by its name, by its own gene (e.g. rob for CbpB), or by a gene it
+  // is associated with (e.g. lacZ). Name matches come first; the others show the gene.
+  const via = new Map();
+  if (needle) {
+    const genes = geneIndex();
+    const byName = [], byOwnGene = [], byTarget = [];
+    for (const n of list) {
+      const g = genes.get(n) || { own: [], targets: [] };
+      const own = g.own.find(x => x.toLowerCase().includes(needle));
+      // Target genes must start with the search text (and need two letters): TFs have many.
+      const targets = needle.length >= 2 ? g.targets.filter(x => x.toLowerCase().startsWith(needle)) : [];
+      if (n.toLowerCase().includes(needle)) byName.push(n);
+      else if (own) { byOwnGene.push(n); via.set(n, [`gene ${own}`, `${n} is encoded by ${own}`]); }
+      else if (targets.length) {
+        byTarget.push(n);
+        via.set(n, [`→ ${targets[0]}${targets.length > 1 ? ` +${targets.length - 1}` : ""}`, `Associated with ${targets.join(", ")}`]);
+      }
+    }
+    list = [...byName, ...byOwnGene, ...byTarget];
+  }
+  tfChips.innerHTML = list.length
+    ? list.map(n => {
+        const [hint, title] = via.get(n) || [];
+        return `<li><button type="button" data-tf="${escape(n)}" aria-pressed="${n === tfFilter}"${title ? ` title="${escape(title)}"` : ""}>` +
+          `${escape(n)}${hint ? `<span class="via">${escape(hint)}</span>` : ""} <span class="sr-only">— show only this TF's records</span></button></li>`;
+      }).join("")
+    : `<li class="no-match">No TF matches the current filters.</li>`;
+}
+
+// The genes each TF can be found by: tf_name -> { own, targets }, both sorted lists.
+//   own      the gene(s) encoding the TF: the PPTP knockdown gene and UniProt's gene name
+//   targets  genes it is associated with: the table's "Associated genes" (ChIP-seq peaks,
+//            PPTP-seq responding promoters) and the target genes of its RegulonDB sites
+// Built on first use and rebuilt when the optional UniProt and RegulonDB files arrive.
+let geneIndexCache = null, ownGenes = new Map(), siteTargets = new Map();   // the two maps are keyed by lowercase tf_name
+function geneIndex() {
+  if (geneIndexCache) return geneIndexCache;
+  const col = h => header.indexOf(h), assocCol = col("associated_genes"), knockCol = col("perturbed_gene");
+  const split = text => (text || "").split(/[^A-Za-z0-9_.'-]+/).filter(Boolean);
+  const sets = new Map();
+  const entry = n => { if (!sets.has(n)) sets.set(n, { own: new Set(), targets: new Set() }); return sets.get(n); };
+  for (const r of rows) {
+    const e = entry(r[tfCol]);
+    for (const g of split(r[knockCol])) e.own.add(g);
+    for (const g of split(r[assocCol])) e.targets.add(g);
+  }
+  for (const n of tfNames) {
+    const e = entry(n), key = n.toLowerCase();
+    for (const g of ownGenes.get(key) || []) e.own.add(g);
+    for (const g of siteTargets.get(key) || []) e.targets.add(g);
+  }
+  geneIndexCache = new Map([...sets].map(([n, e]) => [n, { own: [...e.own].sort(), targets: [...e.targets].filter(g => !e.own.has(g)).concat([...e.targets].filter(g => e.own.has(g))).sort() }]));
+  return geneIndexCache;
+}
+
+// ---- TF dashboard ------------------------------------------------------------
+// Shown above the records table when a TF is picked: which datasets cover it, and
+// the motifs published for it, by method. Names and colors mirror coverage.html.
+const METHOD_NAMES = { SELEX: "gSELEX", PPTP: "PPTP-seq", DAP: "DAP-seq", CHIP: "ChIP-seq" };
+const SET_COLORS = { SELEX: "#2a78d6", PPTP: "#eb6834", CHIP: "#1baf7a", DAP: "#6250d6" };
+const METHOD_WHAT = {
+  SELEX: "In vitro binding · TEC database",
+  PPTP: "Promoter responses to knockdown",
+  DAP: "In vitro binding · Baumgart et al. 2021",
+  CHIP: "In vivo binding",
+};
+const MOTIF_SOURCE_ORDER = ["Baumgart et al. 2021", "Lally et al. 2025", "Fitzgerald et al. 2023"];
+const LALLY_CREDIT = `Images: Lally et al. 2025, Supplementary Data 3, reproduced unmodified under ` +
+  `<a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a>.`;
+const dash = document.getElementById("tf-dash");
+const dashMethods = document.getElementById("dash-methods");
+const dashMotifs = document.getElementById("dash-motifs");
+// Motif data loads separately from the table: undefined while loading, null if it failed.
+let motifRows, motifMatrices = null;
+// Lengths of each TF's RegulonDB binding sites (lowercase tf_name -> [bp]); undefined
+// while loading, null if the file could not be loaded.
+let siteLengths;
+const plural = (n, word) => `${n.toLocaleString("en-US")} ${word}${n === 1 ? "" : "s"}`;
+const methodLabel = m => METHOD_NAMES[m] || m;
+const dot = m => `<span class="dot" style="background:${SET_COLORS[m] || "#898781"}" aria-hidden="true"></span>`;
+
+function motifCard(m, name, tfRows) {
+  const col = h => header.indexOf(h);
+  const facts = [m.motif_type];
+  if (m.width) facts.push(`${m.width} bp`);
+  if (m.sites) facts.push(plural(Number(m.sites), "site"));
+  if (m.e_value) facts.push(`E-value ${m.e_value}`);
+  const entry = motifMatrices && motifMatrices[name] && motifMatrices[name][m.paper];
+  const figure = (media, caption) => `<figure>${media}<figcaption>${caption}</figcaption></figure>`;
+  const image = (file, what) => `<img src="${escape(new URL(file, new URL("../", location.href)).href)}" alt="${what} logo for ${escape(name)}, as published" loading="lazy">`;
+  const [wmImage, pfmImage] = (m.logo_images || "").split(";");
+  let plots = "";
+  if (entry && entry.kind === "frequency") {
+    plots = figure(Logo.sequenceSvg(Logo.fromMatrix(entry.matrix)), "Sequence logo drawn from the paper's frequency matrix.");
+  } else if (wmImage && pfmImage) {
+    // Lally et al.: the energy matrix is drawn from the authors' numbers when they match
+    // the published logo; the frequency matrix exists only as the paper's image.
+    plots = `<div class="motif-plots">` +
+      (entry && entry.kind === "energy" && entry.published_logo === "same"
+        ? figure(Logo.energySvg(entry.matrix), "Energy matrix: letters above zero favor binding.")
+        : figure(image(wmImage, "Energy matrix"), "Energy matrix, as published: letters above zero favor binding.")) +
+      figure(image(pfmImage, "Frequency matrix"), "Frequency matrix, as published.") +
+      `</div><p class="motif-credit">${LALLY_CREDIT}</p>`;
+  } else {
+    // The paper's aligned sites stored in the dataset (rows sourced from the motif's supplement link).
+    const seqs = tfRows.filter(r => r[col("dna_binding_sequence")] && r[col("source")] === m.supplement_url)
+      .map(r => r[col("dna_binding_sequence")].toUpperCase());
+    if (seqs.length && seqs.every(q => q.length === seqs[0].length && /^[ACGT]+$/.test(q))) {
+      plots = figure(Logo.sequenceSvg(Logo.frequencies(seqs)), `Sequence logo drawn from the ${plural(seqs.length, "aligned site")} stored in this database.`);
+    }
+  }
+  return `<article class="motif-card"><h4>${dot(m.method)}${escape(methodLabel(m.method))} · ${escape(m.paper)}</h4>` +
+    `<p class="motif-facts">${facts.map(escape).join(" · ")}</p>${plots}</article>`;
+}
+
+function renderDashboard() {
+  dash.hidden = !tfFilter;
+  if (!tfFilter) return;
+  const name = tfFilter;
+  const col = h => header.indexOf(h);
+  const tfRows = rows.filter(r => r[tfCol] === name);
+  const first = h => (tfRows.find(r => (r[col(h)] || "").trim()) || [])[col(h)] || "";
+
+  // Status, counted the same way as the Coverage page.
+  const isBase = tfRows.some(r => !r[methodCol] || r[methodCol] === "SELEX");
+  const isReg = tfRows.some(r => r[regulonCol] === "✓");
+  document.getElementById("dash-name").textContent = name;
+  document.getElementById("dash-status").textContent =
+    (!isBase ? "Not a TF-table entry" : isReg ? "RegulonDB TF" : "TF-table entry, not in RegulonDB") +
+    ` · ${plural(tfRows.length, "record")}`;
+  const domain = first("tf_binding_domain").replace(/\s/g, "");
+  const facts = [];
+  if (first("effector")) facts.push(["Effector", escape(first("effector"))]);
+  facts.push(["DNA-binding domain", domain ? `${domain.length} aa` : "not stored"]);
+  // Binding-site lengths: RegulonDB's curated sites, else the sites stored in this table.
+  const ownSites = tfRows.map(r => (r[col("dna_binding_sequence")] || "").trim().length).filter(Boolean);
+  const regSites = siteLengths ? siteLengths.get(name.toLowerCase()) || [] : [];
+  const sites = regSites.length ? regSites : ownSites;
+  const span = v => { const lo = Math.min(...v), hi = Math.max(...v); return lo === hi ? `${lo} bp` : `${lo}–${hi} bp`; };
+  facts.push(["DNA-binding region",
+    sites.length ? `${span(sites)} (${plural(sites.length, regSites.length ? "RegulonDB site" : "site")})`
+      : siteLengths === undefined ? "loading…" : siteLengths === null ? "RegulonDB sites could not be loaded" : "not stored"]);
+  document.getElementById("dash-facts").innerHTML = facts.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("");
+
+  const motifs = (motifRows || []).filter(m => m.tf_name.toLowerCase() === name.toLowerCase())
+    .sort((a, b) => MOTIF_SOURCE_ORDER.indexOf(a.paper) - MOTIF_SOURCE_ORDER.indexOf(b.paper));
+
+  // Coverage: one tile per dataset.
+  dashMethods.innerHTML = METHODS.map(m => {
+    const own = tfRows.filter(r => r[methodCol] === m);
+    const label = `<span class="tile-name">${dot(m)}${escape(methodLabel(m))}</span>`;
+    if (!own.length) {
+      // A paper can publish a motif for a TF it has no record for here (e.g. a DAP-seq
+      // motif for a TF the paper does not mark as successful).
+      const detail = motifs.some(x => x.method === m) ? "No record here, but a motif is published" : METHOD_WHAT[m];
+      return `<li><div class="method-tile uncovered">${label}<span class="tile-value">Not covered</span><span class="tile-detail">${detail}</span></div></li>`;
+    }
+    let value = plural(own.length, "record");
+    if (m === "PPTP") {
+      const media = new Set(own.map(r => r[mediumCol]).filter(Boolean)).size;
+      value = plural(own.length, "response") + (media ? ` · ${plural(media, "medium").replace("mediums", "media")}` : "");
+    }
+    return `<li><button type="button" class="method-tile" data-method="${m}" aria-pressed="${selectedMethods().has(m)}">` +
+      `${label}<span class="tile-value">${value}</span><span class="tile-detail">${METHOD_WHAT[m]}</span><span class="sr-only"> — show only these records</span></button></li>`;
+  }).join("");
+
+  // Motifs: one card per published motif.
+  if (motifRows === undefined) { dashMotifs.innerHTML = `<p class="dash-none">Loading motifs…</p>`; return; }
+  if (motifRows === null) { dashMotifs.innerHTML = `<p class="dash-none">Motif data could not be loaded.</p>`; return; }
+  dashMotifs.innerHTML =
+    (motifs.length ? `<div class="dash-motifs">${motifs.map(m => motifCard(m, motifs[0].tf_name, tfRows)).join("")}</div>` : "") +
+    (motifs.length ? "" : `<p class="dash-none">No motif is published for this TF.</p>`) +
+    (motifs.length ? `<p class="dash-more"><a href="motif.html?tf=${encodeURIComponent(motifs[0].tf_name)}&amp;from=database">Motif details, matrices and sources →</a></p>` : "");
+}
+
+dashMethods.addEventListener("click", e => {
+  const tile = e.target.closest("button[data-method]");
+  if (!tile) return;
+  // Tiles toggle independently, so several methods can be shown together.
+  const on = selectedMethods();
+  if (!on.delete(tile.dataset.method)) on.add(tile.dataset.method);
+  methodFilter = [...on].join(",");
+  methodSelect.value = on.size === 1 ? methodFilter : "";
+  page = 0;
+  render();
+  tableWrap.scrollTop = 0;
+});
+
+// The landing view is the TF box alone; the filters and table appear once a TF
+// is picked (or the whole dataset is requested).
+// Keep the selected TF and the table filters in the address (?tf=&method=&medium=&strain=), so
+// the browser's Back button, a reload or a shared link returns to the same filtered view.
+let urlReady = false;   // set once the address has been read on load
+function syncURL() {
+  if (!urlReady) return;
+  const query = new URLSearchParams();
+  if (tfFilter) query.set("tf", tfFilter);
+  // The table filters only count while the table is on screen.
+  if (methodFilter && !database.hidden) query.set("method", methodFilter);
+  if (mediumFilter && !database.hidden) query.set("medium", mediumFilter);
+  if (strainFilter && !database.hidden) query.set("strain", strainFilter);
+  const url = location.pathname + (query.size ? `?${query}` : "");
+  if (url !== location.pathname + location.search) history.replaceState(null, "", url);
+}
+
+function showDatabase(on) {
+  database.hidden = !on;
+}
+
+function selectTF(name) {
+  const deselect = tfFilter === name;
+  tfFilter = deselect ? "" : name;
+  page = 0;
+  renderTFChips();
+  renderDashboard();
+  if (deselect) {
+    showDatabase(false);
+    syncURL();
+    return;
+  }
+  showDatabase(true);
+  render();
+  tableWrap.scrollTop = 0;
+  dash.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+tfChips.addEventListener("click", e => {
+  const btn = e.target.closest("button[data-tf]");
+  if (btn) selectTF(btn.dataset.tf);
+});
+tfFilterInput.addEventListener("input", renderTFChips);
+tfRegulonBox.addEventListener("change", () => {
+  // If the selected TF is filtered out of the list, drop the selection too.
+  if (tfRegulonBox.checked && tfFilter && !tfRegulonNames.has(tfFilter)) {
+    tfFilter = "";
+    page = 0;
+    showDatabase(false);
+    renderDashboard();
+    syncURL();
+  }
+  renderTFChips();
+});
+
+table.tHead.addEventListener("click", e => {
+  const sorter = e.target.closest("button.sort");
+  if (sorter) {
+    const i = Number(sorter.dataset.sort);
+    if (sortCol === i) sortDir = -sortDir;
+    else { sortCol = i; sortDir = 1; }
+    page = 0;
+    render();
+    [...table.tHead.querySelectorAll("button.sort")]
+      .find(b => Number(b.dataset.sort) === i)?.focus({ preventScroll: true });
+    return;
+  }
+  const button = e.target.closest("button.compress");
+  if (button) {
+    const h = button.dataset.col;
+    columnView.compressed.has(h) ? columnView.compressed.delete(h) : columnView.compressed.add(h);
+    saveView();
+    render();
+    [...table.tHead.querySelectorAll(".compress")].find(b => b.dataset.col === h)?.focus({ preventScroll: true });
+  }
+});
+methodSelect.addEventListener("change", () => {
+  methodFilter = methodSelect.value;
+  page = 0;
+  render();
+  tableWrap.scrollTop = 0;
+});
+mediumSelect.addEventListener("change", () => {
+  mediumFilter = mediumSelect.value;
+  page = 0;
+  render();
+  tableWrap.scrollTop = 0;
+});
+strainSelect.addEventListener("change", () => {
+  strainFilter = strainSelect.value;
+  page = 0;
+  render();
+  tableWrap.scrollTop = 0;
+});
+resetFilters.addEventListener("click", () => {
+  methodSelect.value = methodFilter = "";
+  mediumSelect.value = mediumFilter = "";
+  strainSelect.value = strainFilter = "";
+  page = 0;
+  tfFilter = "";
+  tfFilterInput.value = "";
+  renderTFChips();
+  renderDashboard();
+  render();
+  tableWrap.scrollTop = 0;
+});
+previousPage.addEventListener("click", () => {
+  page = Math.max(0, page - 1);
+  render();
+  tableWrap.scrollTop = 0;
+});
+nextPage.addEventListener("click", () => {
+  page++;
+  render();
+  tableWrap.scrollTop = 0;
+});
+
+// Motif list and matrices for the dashboard. The matrices are optional: without them
+// the cards still list each motif's source and numbers.
+const getText = url => fetch(url, { cache: "no-store" }).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); });
+Promise.all([getText("../data/motifs.csv"), getText("../data/motif_matrices.json").then(JSON.parse).catch(() => null)])
+  .then(([text, matrices]) => {
+    const [head, ...list] = parseCSV(text);
+    motifRows = list.map(r => Object.fromEntries(head.map((h, i) => [h, r[i] || ""])));
+    motifMatrices = matrices;
+  })
+  .catch(() => { motifRows = null; })
+  .then(renderDashboard);
+
+getText("../data/regulondb_sites.csv")
+  .then(text => {
+    const [head, ...list] = parseCSV(text);
+    const tf = head.indexOf("tf_name"), seq = head.indexOf("sequence"), genes = head.indexOf("target_genes");
+    const lengths = new Map(), targets = new Map();
+    for (const r of list) {
+      if (!r[tf] || !r[seq]) continue;
+      const key = r[tf].toLowerCase();
+      if (!lengths.has(key)) { lengths.set(key, []); targets.set(key, new Set()); }
+      lengths.get(key).push(r[seq].length);
+      for (const g of (r[genes] || "").split(/[;,\s]+/).filter(Boolean)) targets.get(key).add(g);
+    }
+    siteLengths = lengths;
+    siteTargets = targets;
+    geneIndexCache = null;   // the gene search now also knows the RegulonDB target genes
+  })
+  .catch(() => { siteLengths = null; })
+  .then(() => { renderDashboard(); if (tfFilterInput.value.trim()) renderTFChips(); });
+
+// UniProt's gene name for each TF, so a TF can be found by its gene (optional).
+getText("../data/sources/uniprot/dbd_uniprot.tsv")
+  .then(text => {
+    const [head, ...lines] = text.trim().split("\n").map(line => line.split("\t"));
+    const tf = head.indexOf("tf_name"), gene = head.indexOf("uniprot_gene");
+    const own = new Map();
+    for (const r of lines) {
+      if (!r[tf] || !r[gene]) continue;
+      const key = r[tf].toLowerCase();
+      if (!own.has(key)) own.set(key, new Set());
+      own.get(key).add(r[gene]);
+    }
+    ownGenes = own;
+    geneIndexCache = null;
+    if (tfFilterInput.value.trim()) renderTFChips();
+  })
+  .catch(() => {});
+
+fetch(DATA_URL, { cache: "no-store" })
+  .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+  .then(text => {
+    [header = [], ...rows] = parseCSV(text);
+    if (!header.length) throw new Error("empty");
+    // Row positions belong to the current view; record IDs stay in the CSV.
+    header.unshift("index");
+    rows.forEach(r => r.unshift(""));
+    methodCol = header.indexOf("method");
+    regulonCol = header.indexOf("regulondb");
+    mediumCol = header.indexOf("growth_medium");
+    strainCol = header.indexOf("strain");
+    tfCol = header.indexOf("tf_name");
+    // The binding domain is a property of the protein, so the CSV stores it once
+    // on the TF's base row. Copy it onto that TF's other records so every row of
+    // a TF shows and searches on the same sequence.
+    const domainCol = header.indexOf("tf_binding_domain");
+    const nameCol = header.indexOf("tf_name");
+    if (domainCol >= 0 && nameCol >= 0) {
+      const byTF = new Map();
+      for (const r of rows) {
+        const v = (r[domainCol] || "").trim();
+        if (v && !byTF.has(r[nameCol])) byTF.set(r[nameCol], v);
+      }
+      for (const r of rows) {
+        if (!(r[domainCol] || "").trim() && byTF.has(r[nameCol])) {
+          r[domainCol] = byTF.get(r[nameCol]);
+        }
+      }
+    }
+    const availableMethods = [...new Set(rows.map(r => r[methodCol]).filter(Boolean))];
+    const methods = [...METHODS.filter(m => availableMethods.includes(m)), ...availableMethods.filter(m => !METHODS.includes(m)).sort()];
+    methodSelect.innerHTML = '<option value="">All methods</option>' + methods.map(m => `<option value="${escape(m)}">${escape(m)}</option>`).join("");
+    const media = [...new Set(rows.map(r => r[mediumCol]).filter(Boolean))];
+    mediumSelect.innerHTML = '<option value="">All media</option>' + media.map(m => `<option value="${escape(m)}">${escape(m)}</option>`).join("");
+    const strains = strainsFor("");
+    // Browse-by-TF: every distinct name, in one alphabetical list (case-insensitive).
+    if (tfCol >= 0) {
+      const allNames = new Set(rows.map(r => r[tfCol]).filter(Boolean));
+      const collate = (a, b) => a.localeCompare(b, "en", { sensitivity: "base" });
+      tfNames = [...allNames].sort(collate);
+      // A TF counts as RegulonDB-marked if any of its records carries the tick.
+      tfRegulonNames = new Set();
+      if (regulonCol >= 0) {
+        for (const r of rows) {
+          if (r[regulonCol] === "✓" && r[tfCol]) tfRegulonNames.add(r[tfCol]);
+        }
+      }
+      tfRegulonBox.disabled = regulonCol < 0;
+      tfPicker.hidden = tfNames.length === 0;
+      showDatabase(false);   // landing view is the TF box alone
+      renderTFChips();
+      // index.html?tf=<name>&method=&medium= opens straight onto that TF's dashboard
+      // with the same table filters.
+      const query = new URLSearchParams(location.search);
+      const wanted = (query.get("tf") || "").toLowerCase();
+      const linked = wanted && tfNames.find(n => n.toLowerCase() === wanted);
+      methodFilter = [...new Set((query.get("method") || "").split(","))].filter(m => methods.includes(m)).join(",");
+      methodSelect.value = methodFilter.includes(",") ? "" : methodFilter;
+      if (media.includes(query.get("medium"))) mediumFilter = query.get("medium");
+      if (strains.includes(query.get("strain"))) strainFilter = query.get("strain");   // render() drops what the other filters rule out
+      urlReady = true;
+      if (linked) selectTF(linked);
+      else if (methodFilter || mediumFilter || strainFilter) showDatabase(true);   // filtered table without a TF
+    }
+    urlReady = true;
+    methodSelect.disabled = methodCol < 0;
+    tableWrap.setAttribute("aria-busy", "false");
+    render();
+  })
+  .catch(() => {
+    count.textContent = "Data unavailable";
+    document.getElementById("empty-title").textContent = "Unable to load entries";
+    document.getElementById("empty-description").textContent = "Refresh the page to try loading the database again.";
+    document.getElementById("table-hint").hidden = true;
+    empty.hidden = false;
+    tableWrap.hidden = true;
+    tableWrap.setAttribute("aria-busy", "false");
+    methodSelect.disabled = true;
+    mediumSelect.disabled = true;
+    strainSelect.disabled = true;
+    pagination.hidden = true;
+  });
+  </script>
+  <script>window.WATCH_FILES = ["index.html", "../assets/nav.css","../assets/logo.js", "../data/dataset.csv", "../data/motifs.csv", "../data/motif_matrices.json", "../data/regulondb_sites.csv"];</script>
+  <script src="../assets/nav.js"></script>
+  <script src="../assets/dev-reload.js"></script>
+</body>
+</html>

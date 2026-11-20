@@ -1,0 +1,76 @@
+/* Site-wide floating navigation bar: a frosted-glass panel at the top of each page, which
+   scrolls away with the page. It holds the site title and organism, the page tabs and
+   the dataset download. Every page uses the same markup and the same fixed size (100px tall), so the
+   bar does not move or resize when switching tabs. */
+/* The pages have different base styles, so the bar sets its own: without these it came out
+   2px taller and with differently spaced text on the Notes page. */
+.site-bar, .site-bar * { box-sizing: border-box; }
+html { scrollbar-gutter: stable; }   /* a page with no scrollbar must not make the bar wider */
+.site-bar {
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  position: relative; z-index: 50;
+  max-width: 1480px; margin: 16px auto 0; padding: 0 40px;   /* as wide as the TF list on the Database page */
+  pointer-events: none;              /* only the panel itself takes clicks, not the gap beside it */
+}
+.site-bar-inner {
+  pointer-events: auto; position: relative;
+  display: flex; align-items: center; gap: 8px 36px;
+  height: 100px; padding: 0 36px;
+  background: rgba(240, 242, 246, 0.72); color: #222222;
+  -webkit-backdrop-filter: blur(12px) saturate(180%); backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.22); border-radius: 12px;
+  transition: background-color 0.3s;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+/* A few E. coli cells swim across the empty middle of the bar, behind its contents.
+   assets/nav.js adds them (.site-bugs); each one travels at its own speed, bobs, wobbles,
+   beats its flagella and now and then tumbles (a brief swerve). The strip
+   fades out at both ends so nothing passes under the title or the tabs, and it is hidden
+   on narrow windows. */
+.site-bugs {
+  position: absolute; z-index: -1; top: 0; bottom: 0; left: 400px; right: 500px; overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 70px, #000 calc(100% - 70px), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 70px, #000 calc(100% - 70px), transparent);
+  pointer-events: none;
+}
+.site-bug { position: absolute; width: 96px; margin-top: -22px; animation: site-bug-run linear infinite; }
+.site-bug svg { display: block; width: 100%; height: auto; overflow: visible; animation: site-bug-wobble 0.7s ease-in-out infinite alternate; }
+.site-bug-bob { animation: site-bug-bob 2.6s ease-in-out infinite alternate; }
+.site-bug-tumble { animation: site-bug-tumble ease-in-out infinite; }
+.site-bug .wave { animation: site-bug-wave 0.45s linear infinite; }
+@keyframes site-bug-run { from { left: -100px; } to { left: 100%; } }                     /* the run across the bar */
+@keyframes site-bug-bob { from { transform: translateY(-5px); } to { transform: translateY(5px); } }
+/* A tumble: mostly straight, then a brief swerve one way and back, as real cells reorient between runs. */
+@keyframes site-bug-tumble { 0%, 78% { transform: rotate(0); } 85% { transform: rotate(-24deg); } 93% { transform: rotate(14deg); } 100% { transform: rotate(0); } }
+@keyframes site-bug-wobble { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
+@keyframes site-bug-wave { to { transform: translateX(-16px); } }                           /* one wavelength: the wave runs down the flagellum */
+@media (prefers-reduced-motion: reduce) { .site-bug, .site-bug * { animation: none !important; } }
+@media (max-width: 1150px) { .site-bugs { display: none; } }
+.site-bar-inner:hover { background: rgba(244, 246, 249, 0.82); }
+.site-bar .site-title { margin: 0 auto 0 0; font-size: 1.35rem; line-height: 1.2; letter-spacing: -0.01em; font-weight: 650; white-space: nowrap; }
+.site-bar .site-title a { color: #222222; text-decoration: none; }
+.site-bar .site-title em { display: block; margin-top: 3px; color: #666666; font-size: 0.8em; font-weight: 500; letter-spacing: 0; }   /* the organism, on its own line under the title */
+.site-tabs { display: flex; gap: 36px; font-size: 1rem; }
+.site-tabs a {
+  padding: 6px 0; border-bottom: 2px solid transparent;
+  color: #444444; font-weight: 500; letter-spacing: 0.025em; text-decoration: none; white-space: nowrap;
+  transition: transform 0.2s, color 0.2s;
+}
+.site-tabs a:hover { color: #111111; transform: scale(1.05); }
+.site-tabs a[aria-current="page"] { color: #111111; border-bottom-color: #111111; }
+.site-bar .site-download {
+  display: inline-flex; align-items: center; gap: 7px; height: 44px; padding: 0 16px;
+  border: 1px solid rgba(0, 0, 0, 0.22); border-radius: 6px; background: rgba(255, 255, 255, 0.8);
+  color: #222222; font-size: 0.92rem; font-weight: 500; text-decoration: none; white-space: nowrap;
+}
+.site-bar .site-download:hover { background: #ffffff; border-color: rgba(0, 0, 0, 0.28); }
+.site-bar :focus-visible { outline: 3px solid #555555; outline-offset: 2px; }
+@media (max-width: 900px) { .site-bar { padding: 0 24px; } }
+@media (max-width: 760px) {
+  /* Narrow windows: the title takes the first line, the tabs and download the second. */
+  .site-bar { margin-top: 8px; padding: 0 10px; }
+  .site-bar-inner { flex-wrap: wrap; height: auto; padding: 16px 16px 14px; gap: 10px 16px; }
+  .site-bar .site-title { flex-basis: 100%; white-space: normal; }
+  .site-bar .site-title { font-size: 1.15rem; }
+  .site-tabs { margin-right: auto; gap: 20px; }
+}

@@ -1,0 +1,24 @@
+{
+  "paper": "Baumgart LA, Lee JE, Salamov A, Dilworth DJ, Na H, Mingay M, Blow MJ, Zhang Y, Yoshinaga Y, Daum CG, O'Malley RC. Persistence and plasticity in bacterial gene regulation. Nat Methods 18, 1499-1510 (2021).",
+  "doi": "https://doi.org/10.1038/s41592-021-01312-2",
+  "protocol_paper": "Bartlett A, O'Malley RC, Huang SC, Galli M, Nery JR, Gallavotti A, Ecker JR. Mapping genome-wide transcription-factor binding sites using DAP-seq. Nat Protoc 12, 1659-1672 (2017). https://doi.org/10.1038/nprot.2017.055",
+  "bioproject": "PRJNA758434",
+  "supplementary_tables_url": "https://static-content.springer.com/esm/art%3A10.1038%2Fs41592-021-01312-2/MediaObjects/41592_2021_1312_MOESM3_ESM.xlsx",
+  "retrieved": "2026-11-06",
+  "supplementary_tables_sha256": "dcdb591c970403b5a309719c23520e83d88c0e5cd366812ed8d7cf8376aee825",
+  "dap_tf_list_sha256": "1a8a1395e2c0897cd042713336f03767ac3706093983b492c8f39dfea77ec8e5",
+  "tf_count_attempted": 214,
+  "tf_count_successful": 107,
+  "tf_source_strain": "Escherichia coli K-12 MG1655",
+  "ecoli_genomes_in_pool": {
+    "MG1655": "GCF_000005845.2",
+    "BW25113": "GCF_004355105.1"
+  },
+  "motifs_url": "https://static-content.springer.com/esm/art%3A10.1038%2Fs41592-021-01312-2/MediaObjects/41592_2021_1312_MOESM5_ESM.zip",
+  "motifs_description": "Supplementary Data 2: one MEME (v4.12.0) motif file per TF; motifs/escherichia_coli_motifs/ holds the 124 E. coli TFs (motifs/pseudomonas_simiae_motifs/ the other 118)",
+  "motifs_retrieved": "2026-11-12",
+  "motifs_zip_sha256": "ed353947e5422afcffab24dd22188d4cddc9e3c01313fa5484fcdf0e819c5cfb",
+  "dap_motifs_sha256": "066dc3d2361115415019a706a887285ab5722e268718290aed9f8b6f946dbe93",
+  "motif_count_ecoli": 124,
+  "dap_motif_matrices_sha256": "cef499c00a359293a079b376fd56af7d2041ff30c4a4feae01c810e2e4b4d7cd"
+}

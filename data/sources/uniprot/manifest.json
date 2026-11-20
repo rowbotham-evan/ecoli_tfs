@@ -1,0 +1,48 @@
+{
+  "source": "UniProtKB REST (stream endpoint)",
+  "url": "https://rest.uniprot.org/uniprotkb/stream?query=%28proteome%3AUP000000625%29+AND+%28reviewed%3Atrue%29&fields=accession%2Cid%2Cprotein_name%2Cgene_names%2Cft_dna_bind%2Cft_domain%2Csequence%2Clength&format=tsv",
+  "query": "(proteome:UP000000625) AND (reviewed:true)",
+  "fields": "accession,id,protein_name,gene_names,ft_dna_bind,ft_domain,sequence,length",
+  "proteome": "UP000000625",
+  "organism": "Escherichia coli K-12 MG1655",
+  "uniprot_release": "2026_04",
+  "uniprot_release_date": "04-November-2026",
+  "retrieved": "2026-11-09T10:01:39Z",
+  "files": {
+    "uniprot_k12_reviewed.tsv": {
+      "sha256": "2ad9c58bc17333cd14d474feb9f247455bcb03c995990402d93bbce86ad3aa65",
+      "records": 4403,
+      "note": "raw download, reviewed entries only"
+    },
+    "dbd_uniprot.tsv": {
+      "sha256": "69bcb158ec1740c8d20f89ccb6ab7bbc68caa149035a51d741ebff0bcae3226a",
+      "records": 326,
+      "note": "DBD spans extracted from the raw download"
+    }
+  },
+  "dbd_choice_rule": {
+    "1": "DNA_BIND feature >= 40 aa",
+    "2": "longest DOMAIN feature whose note matches HTH/helix-turn-helix",
+    "3": "short DNA_BIND motif widened to a 60 aa window",
+    "4": "full chain when unannotated and <= 200 aa (compact)",
+    "5": "full chain, longer than the compact cap - not imported"
+  },
+  "imported_span_types": [
+    "DNA_BIND",
+    "DOMAIN(HTH)",
+    "DNA_BIND(windowed)",
+    "FULL_CHAIN(compact)"
+  ],
+  "excluded_span_types": [
+    "FULL_CHAIN"
+  ],
+  "excluded_note": "chains longer than the 200 aa compact cap with no annotated DBD are multi-domain enzymes whose chain is not a binding domain; composite-entry subunits are resolved in the snapshot but not written, because one cell cannot hold two sequences",
+  "unmatched_table_entries": [
+    "CitR",
+    "DicD",
+    "GadRcs",
+    "NfeR"
+  ],
+  "tf_name_values": 318,
+  "tf_table_entries": 288
+}
