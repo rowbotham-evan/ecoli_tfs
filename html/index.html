@@ -92,9 +92,9 @@ button.method-tile[aria-pressed="true"] { background: #eeeeee; }
 .tile-value { display: block; margin-top: 4px; font-size: 1rem; font-weight: 650; font-variant-numeric: tabular-nums; }
 .method-tile.uncovered .tile-value { font-weight: 400; }
 .tile-detail { display: block; margin-top: 2px; color: var(--muted); font-size: 0.75rem; }
-.dash-motifs { display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; }   /* one card per row */
-.motif-card { min-width: 0; }
-.motif-card + .motif-card { padding-top: 22px; border-top: 1px solid #555555; }
+.dash-motifs { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; margin-top: 10px; }   /* one card per method, one per row */
+.motif-card { min-width: 0; padding: 18px 22px; border: 2px solid #9a9a9a; border-radius: 10px; background: #ffffff; }
+@media (max-width: 540px) { .motif-card { padding: 14px 14px; } }
 .motif-card h4 { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 0.85rem; font-weight: 650; }
 .motif-facts { margin: 2px 0 10px; color: var(--muted); font-size: 0.75rem; }
 .motif-plots { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 4px 16px; align-items: start; }
@@ -174,6 +174,7 @@ th.compressed { padding-left: 10px; padding-right: 10px; }
       <nav class="site-tabs" aria-label="Main navigation">
         <a href="./" aria-current="page">Database</a>
         <a href="coverage.html">Coverage</a>
+        <a href="ingestion.html">Ingestion</a>
         <a href="notes.html">Notes</a>
       </nav>
       <a class="site-download" href="../data/dataset.csv" download>Download CSV<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8M4.5 6.8 8 10.3l3.5-3.5M2.5 13.5h11"/></svg></a>
@@ -241,7 +242,7 @@ th.compressed { padding-left: 10px; padding-right: 10px; }
       </div>
     </section>
   </main>
-  <script src="../assets/logo.js"></script>
+  <script src="../assets/logo.js?v=3"></script>
   <script>
 // Loads data/dataset.csv and renders a searchable table.
 const DATA_URL = "../data/dataset.csv";
@@ -576,12 +577,12 @@ function motifCard(m, name, tfRows) {
   if (entry && entry.kind === "frequency") {
     plots = figure(Logo.sequenceSvg(Logo.fromMatrix(entry.matrix)), "Sequence logo drawn from the paper's frequency matrix.");
   } else if (wmImage && pfmImage) {
-    // Lally et al.: the energy matrix is drawn from the authors' numbers when they match
-    // the published logo; the frequency matrix exists only as the paper's image.
+    // Lally et al.: a frequency matrix derived from the authors' energy weights, beside the
+    // paper's own frequency matrix, which exists only as an image.
     plots = `<div class="motif-plots">` +
-      (entry && entry.kind === "energy" && entry.published_logo === "same"
-        ? figure(Logo.energySvg(entry.matrix), "Energy matrix: letters above zero favor binding.")
-        : figure(image(wmImage, "Energy matrix"), "Energy matrix, as published: letters above zero favor binding.")) +
+      (entry && entry.kind === "energy"
+        ? figure(Logo.sequenceSvg(Logo.fromEnergy(entry.matrix)), "Frequency matrix, derived from the authors' energy matrix.")
+        : "") +
       figure(image(pfmImage, "Frequency matrix"), "Frequency matrix, as published.") +
       `</div><p class="motif-credit">${LALLY_CREDIT}</p>`;
   } else {
@@ -848,22 +849,18 @@ fetch(DATA_URL, { cache: "no-store" })
     mediumCol = header.indexOf("growth_medium");
     strainCol = header.indexOf("strain");
     tfCol = header.indexOf("tf_name");
-    // The binding domain is a property of the protein, so the CSV stores it once
-    // on the TF's base row. Copy it onto that TF's other records so every row of
-    // a TF shows and searches on the same sequence.
+    // The binding domain is a property of the protein, so it is shown once per TF: on
+    // the TF's first row only (the CSV stores it on the base row, which is not always first).
     const domainCol = header.indexOf("tf_binding_domain");
-    const nameCol = header.indexOf("tf_name");
-    if (domainCol >= 0 && nameCol >= 0) {
-      const byTF = new Map();
+    if (domainCol >= 0) {
+      const firstRow = new Map(), domainOf = new Map();
       for (const r of rows) {
+        if (!firstRow.has(r[tfCol])) firstRow.set(r[tfCol], r);
         const v = (r[domainCol] || "").trim();
-        if (v && !byTF.has(r[nameCol])) byTF.set(r[nameCol], v);
+        if (v && !domainOf.has(r[tfCol])) domainOf.set(r[tfCol], v);
+        r[domainCol] = "";
       }
-      for (const r of rows) {
-        if (!(r[domainCol] || "").trim() && byTF.has(r[nameCol])) {
-          r[domainCol] = byTF.get(r[nameCol]);
-        }
-      }
+      for (const [name, v] of domainOf) firstRow.get(name)[domainCol] = v;
     }
     const availableMethods = [...new Set(rows.map(r => r[methodCol]).filter(Boolean))];
     const methods = [...METHODS.filter(m => availableMethods.includes(m)), ...availableMethods.filter(m => !METHODS.includes(m)).sort()];

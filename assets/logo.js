@@ -23,6 +23,11 @@ window.Logo = (() => {
       `style="font: ${LOGO_FONT}" fill="${BASE_COLORS[b]}">${b}</text>`;
   };
 
+  // Rows of [A, C, G, T] energy weights as per-position frequencies, by the Boltzmann
+  // relation: p(base) = exp(w) / sum of exp(w) over the four bases.
+  function fromEnergy(matrix) {
+    return fromMatrix(matrix.map(row => row.map(Math.exp)));
+  }
   // Per-position base frequencies of equal-length aligned sequences.
   function frequencies(seqs) {
     return [...seqs[0]].map((_, i) => {
@@ -130,5 +135,5 @@ window.Logo = (() => {
     return `<figure class="logo">${zoomButton(energySvg(matrix), title, fullCaption)}<figcaption>${fullCaption}</figcaption>${table}</figure>`;
   }
 
-  return { BASES, frequencies, fromMatrix, bits, zoomButton, sequenceSvg, sequence, energySvg, energy };
+  return { BASES, frequencies, fromMatrix, fromEnergy, bits, zoomButton, sequenceSvg, sequence, energySvg, energy };
 })();

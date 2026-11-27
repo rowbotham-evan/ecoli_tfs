@@ -22,15 +22,17 @@ html { scrollbar-gutter: stable; }   /* a page with no scrollbar must not make t
   transition: background-color 0.3s;
   box-shadow: 0 14px 34px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.95);
 }
-/* A few E. coli cells swim across the empty middle of the bar, behind its contents.
+/* A few E. coli cells swim the whole length of the bar, behind its contents.
    assets/nav.js adds them (.site-bugs); each one travels at its own speed, bobs, wobbles,
-   beats its flagella and now and then tumbles (a brief swerve). The strip
-   fades out at both ends so nothing passes under the title or the tabs, and it is hidden
-   on narrow windows. */
+   beats its flagella and now and then tumbles (a brief swerve). Where a cell passes behind
+   the title, a tab or the download button it turns almost transparent, so the label stays
+   readable: nav.js measures those labels and sets the mask (--bugs-mask). Until it has,
+   the strip is fully masked, so no cell is ever drawn at full strength under a label. The
+   strip is hidden on narrow windows, where the bar wraps onto two lines. */
 .site-bugs {
-  position: absolute; z-index: -1; top: 0; bottom: 0; left: 400px; right: 500px; overflow: hidden;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 70px, #000 calc(100% - 70px), transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 70px, #000 calc(100% - 70px), transparent);
+  position: absolute; z-index: -1; inset: 0; overflow: hidden; border-radius: inherit;
+  -webkit-mask-image: var(--bugs-mask, linear-gradient(transparent, transparent));
+  mask-image: var(--bugs-mask, linear-gradient(transparent, transparent));
   pointer-events: none;
 }
 .site-bug { position: absolute; width: 96px; margin-top: -22px; animation: site-bug-run linear infinite; }
@@ -45,7 +47,7 @@ html { scrollbar-gutter: stable; }   /* a page with no scrollbar must not make t
 @keyframes site-bug-wobble { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
 @keyframes site-bug-wave { to { transform: translateX(-16px); } }                           /* one wavelength: the wave runs down the flagellum */
 @media (prefers-reduced-motion: reduce) { .site-bug, .site-bug * { animation: none !important; } }
-@media (max-width: 1150px) { .site-bugs { display: none; } }
+@media (max-width: 760px) { .site-bugs { display: none; } }
 .site-bar-inner:hover { background: rgba(244, 246, 249, 0.82); }
 .site-bar .site-title { margin: 0 auto 0 0; font-size: 1.35rem; line-height: 1.2; letter-spacing: -0.01em; font-weight: 650; white-space: nowrap; }
 .site-bar .site-title a { color: #222222; text-decoration: none; }
