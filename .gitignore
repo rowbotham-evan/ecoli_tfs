@@ -1,3 +1,6 @@
-# Paper ingestion (local only for now)
+# Local only for now: paper ingestion, notes, and the nav tabs that link to them
 data/ingestion/
 html/ingestion.html
+html/notes.html
+notes.md
+assets/nav.local.js

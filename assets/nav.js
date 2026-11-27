@@ -9,6 +9,15 @@ document.addEventListener("mousedown", e => {
   location.href = link.href;
 });
 
+// Tabs for pages that are kept out of the repository live in assets/nav.local.js, which is
+// git-ignored. It is loaded when present and silently skipped when it is not.
+{
+  const local = document.createElement("script");
+  local.src = new URL("nav.local.js", document.currentScript.src).href;
+  local.onerror = () => local.remove();
+  document.head.appendChild(local);
+}
+
 // Swimming E. coli along the whole bar (styled and animated in assets/nav.css).
 // Each cell is a small SVG: a rod with three flagella. A flagellum is a long wavy line
 // that slides along itself behind a clipping window, which reads as a wave travelling
